@@ -7,6 +7,7 @@ import com.surabhi.taskapp.repository.SubTaskRepository;
 import com.surabhi.taskapp.repository.TaskRepository;
 import com.surabhi.taskapp.response.PaginationResponse;
 import com.surabhi.taskapp.response.Response;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -35,7 +36,7 @@ class TaskServiceImplTest {
     @BeforeEach
     void before() {
         MockitoAnnotations.openMocks(this);
-        this.taskService = new TaskServiceImpl(taskRepository, subTaskRepository);
+        this.taskService = new TaskServiceImpl(taskRepository);
         System.out.println("running before each");
     }
 
@@ -107,7 +108,7 @@ class TaskServiceImplTest {
     @Test
     void add() {
 
-        Response response = new Response<>();
+        Response<?> response = new Response<>();
         response.setHttpStatus(HttpStatus.OK);
         // List<Task> tasks= new ArrayList<>();
         TaskEntity taskEntity = TaskEntity.builder()
@@ -121,9 +122,12 @@ class TaskServiceImplTest {
                 .build();
 
         taskEntity.setSubTaskEntityList(subTaskEntitySet);
-        Mockito.when(taskRepository.save(taskEntity)).thenReturn(null);
+
+        Mockito.when(taskRepository.save(Mockito.any()))
+                .thenReturn(null);
 
 
+        Assertions.assertEquals(200, response.getHttpStatus());
     }
 
 }

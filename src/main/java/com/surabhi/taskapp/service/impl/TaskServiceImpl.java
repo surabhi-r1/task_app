@@ -30,11 +30,8 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private final TaskRepository taskRepository;
 
-    private final SubTaskRepository subTaskRepository;
-
-    public TaskServiceImpl(TaskRepository taskRepository, SubTaskRepository subTaskRepository) {
+    public TaskServiceImpl(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
-        this.subTaskRepository = subTaskRepository;
     }
 
 
@@ -89,21 +86,18 @@ public class TaskServiceImpl implements TaskService {
             TaskEntity taskEntity = new TaskEntity();
             BeanUtils.copyProperties(task, taskEntity);
 
-//            TaskEntity entity = taskRepository.save(taskEntity);
 
             Set<SubTaskEntity> subTaskEntitySet = new HashSet<>();
             if (task.getSubTasks() != null && !task.getSubTasks().isEmpty()) {
                 for (SubTask subTask : task.getSubTasks()) {
                     SubTaskEntity subTaskEntity = new SubTaskEntity();
                     BeanUtils.copyProperties(subTask, subTaskEntity);
-//                    subTaskEntity.setTaskEntity(entity);
                     subTaskEntitySet.add(subTaskEntity);
                 }
             }
 
             taskEntity.setSubTaskEntityList(subTaskEntitySet);
             taskRepository.save(taskEntity);
-//            subTaskRepository.saveAll(subTaskEntitySet);
 
             log.info("operation = add, status = SUCCESS, message = add all tasks");
             response.setHttpStatus(HttpStatus.CREATED);
@@ -168,7 +162,6 @@ public class TaskServiceImpl implements TaskService {
                 response.setHttpStatus(HttpStatus.NOT_FOUND);
             }
             return response;
-            // throw new EntityNotFoundException("Entity not found exception");
         } catch (Exception e) {
             log.error("operation = updateTask, status = ERROR, msg = error in add details", e);
             response.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
