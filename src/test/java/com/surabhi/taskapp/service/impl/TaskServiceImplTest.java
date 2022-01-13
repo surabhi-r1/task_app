@@ -53,7 +53,7 @@ class TaskServiceImplTest {
                 .when(taskRepository).deleteById(id);
 
         Response<?> response = taskService.delete(id);
-        assertEquals(HttpStatus.OK, response.getHttpStatus());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getHttpStatus());
 
     }
 
@@ -217,6 +217,36 @@ class TaskServiceImplTest {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response1.getHttpStatus());
     }
 
+//    @Test
+//    void updateError1() {
+//        Response<?> response = new Response<>();
+//        response.setHttpStatus(HttpStatus.OK);
+//        // List<TaskEntity> taskEntities = new ArrayList<>();
+//        TaskEntity taskEntity = TaskEntity.builder()
+//                .description("aaa")
+//                .name("anu")
+//                .id(11L)
+//                .build();
+//        long id = 11;
+//
+//        Task task = Task.builder()
+//                .name("aaa")
+//                .description("aaaa")
+//                .id(11L)
+//                .build();
+//
+//        //  Mockito.doNothing().when(taskRepository.findById(id));
+//        Mockito.when(taskRepository.findById(id))
+//                .thenReturn(Optional.of(taskEntity));
+//
+//        //  Mockito.when(taskRepository.save(Mockito.any())).thenReturn(null).thenThrow(new HTTPException(500));
+//        Mockito.when(taskRepository.save(Mockito.any())).thenReturn(null);
+//
+//        Response<?> response1 = taskService.update(id, task);
+//
+//        assertEquals(HttpStatus.OK, response1.getHttpStatus());
+//    }
+
 
     @Test
     void getById() {
@@ -254,5 +284,24 @@ class TaskServiceImplTest {
         // assertEquals("aaa", response1.getResponse().getName());
         // assertEquals("aaaa", response1.getResponse().getDescription());
         //assertEquals(11, response1.getResponse().getId());
+    }
+
+    @Test
+    void getByIdError1() {
+        Response<Task> response = new Response<>();
+        response.setHttpStatus(HttpStatus.NOT_FOUND);
+        TaskEntity taskEntity = TaskEntity.builder()
+                .description("aaaa")
+                .name("aaa")
+                .id(11L)
+                .build();
+        long id = 11;
+
+//        Mockito.when(taskRepository.findById(id))
+//                .thenReturn(Optional.of(taskEntity));
+        Mockito.when(taskRepository.findById(id)).thenReturn(Optional.empty());
+
+        Response<Task> response1 = taskService.getById(id);
+        assertEquals(HttpStatus.NOT_FOUND, response1.getHttpStatus());
     }
 }

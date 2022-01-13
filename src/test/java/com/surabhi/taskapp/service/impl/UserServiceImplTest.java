@@ -47,6 +47,15 @@ class UserServiceImplTest {
     }
 
     @Test
+    void deleteError() {
+        long id = 11;
+        Mockito.doThrow(new RuntimeException()).when(userRepository).deleteById(id);
+        Response<?> response = userService.delete(id);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getHttpStatus());
+
+    }
+
+    @Test
     void getAll() {
         Pageable pageable = PageRequest.of(0, 20);
         Set<AddressEntity> addressEntities=new HashSet<>();
@@ -78,6 +87,15 @@ class UserServiceImplTest {
         assertEquals(11,response1.getResponse().getData().get(0).getId());
 
     }
+    @Test
+    void getAllError() {
+        Pageable pageable = PageRequest.of(0, 20);
+       Mockito.when(userRepository.findAll(pageable)).thenThrow(new RuntimeException());
+
+        Response<PaginationResponse<List<User>>> response1 = userService.getAll(pageable);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response1.getHttpStatus());
+    }
 
     @Test
     void add() {
@@ -104,6 +122,33 @@ class UserServiceImplTest {
         Response<?> response1 = userService.add(user);
 
         assertEquals(HttpStatus.CREATED, response1.getHttpStatus());
+    }
+
+    @Test
+    void addError() {
+        Response<?> response = new Response<>();
+        response.setHttpStatus(HttpStatus.CREATED);
+
+        Set<Address> addresses=new HashSet<>();
+        Address address=new Address();
+        address.setPlace("mysore");
+        addresses.add(address);
+
+        User user = User.builder()
+                .id(11L)
+                .name("anu")
+                .gender("male")
+                .age(18)
+                .mobileNumber(100000000L)
+                .regNo(101)
+                .addresses(addresses)
+                .build();
+
+        Mockito.when(userRepository.save(Mockito.any())).thenReturn(new Exception(""));
+
+        Response<?> response1 = userService.add(user);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response1.getHttpStatus());
     }
 
     @Test
@@ -142,6 +187,75 @@ class UserServiceImplTest {
 
 
     @Test
+    void updateError() {
+        Response<?> response = new Response<>();
+        response.setHttpStatus(HttpStatus.OK);
+        UserEntity userEntity = UserEntity.builder()
+                .name("anu")
+                .id(11L)
+                .gender("male")
+                .age(18)
+                .mobileNumber(100000000L)
+                .regNo(101)
+                .build();
+        long id = 11;
+
+        User user = User.builder()
+                .name("aaa")
+                .id(11L)
+                .gender("male")
+                .age(18)
+                .mobileNumber(100000000L)
+                .regNo(101)
+                .build();
+
+        Mockito.when(userRepository.findById(id))
+                .thenReturn(Optional.of(userEntity));
+
+        Mockito.when(userRepository.save(Mockito.any()))
+                .thenReturn(new Exception(" "));
+
+        Response<?> response1 = userService.update(id,user);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response1.getHttpStatus());
+    }
+    @Test
+    void updateError1() {
+        Response<?> response = new Response<>();
+        response.setHttpStatus(HttpStatus.OK);
+        UserEntity userEntity = UserEntity.builder()
+                .name("anu")
+                .id(11L)
+                .gender("male")
+                .age(18)
+                .mobileNumber(100000000L)
+                .regNo(101)
+                .build();
+        long id = 11;
+
+        User user = User.builder()
+                .name("aaa")
+                .id(11L)
+                .gender("male")
+                .age(18)
+                .mobileNumber(100000000L)
+                .regNo(101)
+                .build();
+
+        Mockito.when(userRepository.findById(id))
+                .thenReturn(Optional.empty());
+
+        Mockito.when(userRepository.save(Mockito.any()))
+                .thenReturn(null);
+
+        Response<?> response1 = userService.update(id,user);
+
+        assertEquals(HttpStatus.NOT_FOUND, response1.getHttpStatus());
+    }
+
+
+
+    @Test
     void getById() {
         Response<User> response = new Response<>();
         response.setHttpStatus(HttpStatus.OK);
@@ -168,4 +282,49 @@ class UserServiceImplTest {
         assertEquals("male",response1.getResponse().getGender());
         assertEquals(101,response1.getResponse().getRegNo());
     }
+
+    @Test
+    void getByIdError() {
+        Response<User> response = new Response<>();
+        response.setHttpStatus(HttpStatus.OK);
+        UserEntity userEntity = UserEntity.builder()
+                .name("aaa")
+                .id(11L)
+                .gender("male")
+                .age(18)
+                .mobileNumber(100000000L)
+                .regNo(101)
+                .build();
+        long id = 11;
+
+        Mockito.when(userRepository.findById(id))
+                .thenThrow(new RuntimeException(" "));
+
+        Response<User> response1 = userService.getById(id);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response1.getHttpStatus());
+    }
+    @Test
+    void getByIdError1() {
+        Response<User> response = new Response<>();
+        response.setHttpStatus(HttpStatus.OK);
+        UserEntity userEntity = UserEntity.builder()
+                .name("aaa")
+                .id(11L)
+                .gender("male")
+                .age(18)
+                .mobileNumber(100000000L)
+                .regNo(101)
+                .build();
+        long id = 11;
+
+        Mockito.when(userRepository.findById(id))
+                .thenReturn(Optional.empty());
+
+        Response<User> response1 = userService.getById(id);
+
+        assertEquals(HttpStatus.NOT_FOUND, response1.getHttpStatus());
+
+    }
+
 }

@@ -124,7 +124,7 @@ public class TaskServiceImpl implements TaskService {
                 log.info("operation = getById, status=SUCCESS, message= get task by id");
                 response.setHttpStatus(HttpStatus.OK);
                 response.setResponse(task1);
-                return response;
+              //  return response;
             } else {
                 response.setHttpStatus(HttpStatus.NOT_FOUND);
             }
