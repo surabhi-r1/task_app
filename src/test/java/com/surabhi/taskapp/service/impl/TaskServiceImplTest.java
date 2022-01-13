@@ -46,14 +46,16 @@ class TaskServiceImplTest {
 
     }
 
-//    @Test
-//    void deleteError() {
-//        long id = 11;
-//        Mockito.doNothing().when(taskRepository).deleteById(id);
-//        Response<?> response = taskService.delete(id);
-//        assertEquals(HttpStatus.OK, response.getHttpStatus());
-//
-//    }
+    @Test
+    void deleteError() {
+        long id = 11;
+        Mockito.doThrow(new RuntimeException())
+                .when(taskRepository).deleteById(id);
+
+        Response<?> response = taskService.delete(id);
+        assertEquals(HttpStatus.OK, response.getHttpStatus());
+
+    }
 
     @Test
     void getAll() {
@@ -84,6 +86,20 @@ class TaskServiceImplTest {
         assertEquals("aaaaa", response1.getResponse().getData().get(0).getDescription());
     }
 
+    @Test
+    void getAllError() {
+        Pageable pageable = PageRequest.of(0, 20);
+
+
+        Mockito.when(taskRepository.findAll(pageable))
+                .thenThrow(new RuntimeException(""));
+
+
+        Response<PaginationResponse<List<Task>>> response1 = taskService.getAll(pageable);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response1.getHttpStatus());
+    }
+
 
     @Test
     void add() {
@@ -110,7 +126,6 @@ class TaskServiceImplTest {
 
         assertEquals(HttpStatus.CREATED, response1.getHttpStatus());
     }
-
 
 
     @Test
@@ -140,6 +155,7 @@ class TaskServiceImplTest {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response1.getHttpStatus());
     }
 
+
     @Test
     void update() {
         Response<?> response = new Response<>();
@@ -162,12 +178,43 @@ class TaskServiceImplTest {
         Mockito.when(taskRepository.findById(id))
                 .thenReturn(Optional.of(taskEntity));
 
-     //  Mockito.when(taskRepository.save(Mockito.any())).thenReturn(null).thenThrow(new HTTPException(500));
+        //  Mockito.when(taskRepository.save(Mockito.any())).thenReturn(null).thenThrow(new HTTPException(500));
         Mockito.when(taskRepository.save(Mockito.any())).thenReturn(null);
 
         Response<?> response1 = taskService.update(id, task);
 
         assertEquals(HttpStatus.OK, response1.getHttpStatus());
+    }
+
+
+    @Test
+    void updateError() {
+        Response<?> response = new Response<>();
+        response.setHttpStatus(HttpStatus.OK);
+        // List<TaskEntity> taskEntities = new ArrayList<>();
+        TaskEntity taskEntity = TaskEntity.builder()
+                .description("aaa")
+                .name("anu")
+                .id(11L)
+                .build();
+        long id = 11;
+
+        Task task = Task.builder()
+                .name("aaa")
+                .description("aaaa")
+                .id(11L)
+                .build();
+
+        //  Mockito.doNothing().when(taskRepository.findById(id));
+        Mockito.when(taskRepository.findById(id))
+                .thenReturn(Optional.of(taskEntity));
+
+        //  Mockito.when(taskRepository.save(Mockito.any())).thenReturn(null).thenThrow(new HTTPException(500));
+        Mockito.when(taskRepository.save(Mockito.any())).thenReturn(new Exception(""));
+
+        Response<?> response1 = taskService.update(id, task);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response1.getHttpStatus());
     }
 
 
@@ -191,5 +238,21 @@ class TaskServiceImplTest {
         assertEquals("aaa", response1.getResponse().getName());
         assertEquals("aaaa", response1.getResponse().getDescription());
         assertEquals(11, response1.getResponse().getId());
+    }
+
+
+    @Test
+    void getByIdError() {
+        Response<Task> response = new Response<>();
+        long id = 11;
+
+        Mockito.when(taskRepository.findById(id)).thenThrow(new RuntimeException(""));
+
+        Response<Task> response1 = taskService.getById(id);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response1.getHttpStatus());
+        // assertEquals("aaa", response1.getResponse().getName());
+        // assertEquals("aaaa", response1.getResponse().getDescription());
+        //assertEquals(11, response1.getResponse().getId());
     }
 }
