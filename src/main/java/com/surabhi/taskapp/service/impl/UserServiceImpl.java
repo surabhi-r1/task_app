@@ -27,11 +27,11 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private final UserRepository userRepository;
-    private final AddressRepository addressRepository;
+ //   private final AddressRepository addressRepository;
 
-    public UserServiceImpl(UserRepository userRepository, AddressRepository addressRepository) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.addressRepository = addressRepository;
+      //  this.addressRepository = addressRepository;
     }
 
     @Override
@@ -79,24 +79,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response<?> add(User user) {
         log.info("operation = add, status = IN_PROGRESS, message = add all info");
-        Response<User> response = new Response<>();
+        Response<?> response = new Response<>();
         try {
             UserEntity userEntity = new UserEntity();
             BeanUtils.copyProperties(user, userEntity);
-            UserEntity entity = userRepository.save(userEntity);
+           // UserEntity entity = userRepository.save(userEntity);
 
 
-            List<AddressEntity> addressEntitySet = new ArrayList<>();
+            Set<AddressEntity> addressEntitySet = new HashSet<>();
             if (user.getAddresses() != null && !user.getAddresses().isEmpty()) {
                 for (Address address : user.getAddresses()) {
                     AddressEntity addressEntity = new AddressEntity();
                     BeanUtils.copyProperties(address, addressEntity);
-                    addressEntity.setUserEntity(entity);
-                    addressEntitySet.add(addressEntity);
+                   addressEntitySet.add(addressEntity);
                 }
             }
 
-            addressRepository.saveAll(addressEntitySet);
+            userEntity.setAddressEntityList(addressEntitySet);
+            userRepository.save(userEntity);
             log.info("operation = add, status = SUCCESS, message = add all info");
             response.setHttpStatus(HttpStatus.CREATED);
             return response;
@@ -109,8 +109,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Response<User> update(Long id, User user) {
-        Response<User> response = new Response<>();
+    public Response<?> update(Long id, User user) {
+        Response<?> response = new Response<>();
         log.info("operation = update, status = IN_PROGRESS, message = update user info");
         try {
             Optional<UserEntity> entity = userRepository.findById(id);

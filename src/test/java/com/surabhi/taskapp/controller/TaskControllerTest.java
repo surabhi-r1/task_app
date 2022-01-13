@@ -37,19 +37,26 @@ class TaskControllerTest {
 
     @Test
     void getTaskById() {
-        Response<Task> response = new Response<>();
-        response.setHttpStatus(HttpStatus.OK);
+        Response response = Response.builder()
+                .httpStatus(OK)
+                .build();
 
         Task task = Task.builder()
                 .id(11)
-                .description("aaa")
-                .name("aa")
+                .description("aaaa")
+                .name("aaa")
                 .build();
         response.setResponse(task);
         long id = 11;
-        Mockito.when(taskService.getById(id)).thenReturn(response);
+        Mockito.when(taskService.getById(id))
+                .thenReturn(response);
+
         ResponseEntity<Task> responseEntity = taskController.getTaskById(id);
+
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals("aaa",responseEntity.getBody().getName());
+        assertEquals("aaaa",responseEntity.getBody().getDescription());
+        assertEquals(11,responseEntity.getBody().getId());
     }
 
     @Test
@@ -60,8 +67,12 @@ class TaskControllerTest {
                 .description("aaa")
                 .name("aa")
                 .build();
-        Mockito.when(taskService.add(task)).thenReturn(response);
+
+        Mockito.when(taskService.add(task))
+                .thenReturn(response);
+
         ResponseEntity<?> responseEntity = taskController.addTask(task);
+
         assertEquals(CREATED, responseEntity.getStatusCode());
 
     }
@@ -71,26 +82,34 @@ class TaskControllerTest {
         Response response = new Response<>();
         response.setHttpStatus(OK);
         long id = 11;
-        Mockito.when(taskService.delete(id)).thenReturn(response);
+
+        Mockito.when(taskService.delete(id))
+                .thenReturn(response);
+
         ResponseEntity<?> responseEntity = taskController.deleteTask(id);
+
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
+
     @Test
     void update() {
-        Response<Task> response = new Response<>();
-        {
-            response.setHttpStatus(OK);
-            Task task = Task.builder()
-                    .description("aaa")
-                    .name("aa")
-                    .build();
-            long id = 11;
-            Mockito.when(taskService.update(id, task)).thenReturn(response);
-            ResponseEntity<Task> responseEntity = taskController.updateTask(task, id);
-            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        }
+        Response response = new Response<>();
+        response.setHttpStatus(OK);
+        Task task = Task.builder()
+                .description("aaa")
+                .name("aa")
+                .build();
+        long id = 11;
+
+        Mockito.when(taskService.update(id, task))
+                .thenReturn(response);
+
+        ResponseEntity<?> responseEntity = taskController.updateTask(task, id);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
+
 
     /*
      * testing the bulk update api = /sov/table/v2 method = POST

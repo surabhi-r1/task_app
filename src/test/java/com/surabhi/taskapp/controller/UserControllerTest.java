@@ -53,9 +53,18 @@ class UserControllerTest {
                 .build();
         response.setResponse(user);
         long id = 11;
-        Mockito.when(userService.getById(id)).thenReturn(response);
+
+        Mockito.when(userService.getById(id))
+                .thenReturn(response);
+
         ResponseEntity<User> responseEntity = userController.getInfoById(id);
+
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals("aaa", responseEntity.getBody().getName());
+        assertEquals(101, responseEntity.getBody().getRegNo());
+        assertEquals("male", responseEntity.getBody().getGender());
+        assertEquals(18, responseEntity.getBody().getAge());
+
     }
 
     /*
@@ -105,15 +114,19 @@ class UserControllerTest {
      */
     @Test
     void update() {
-        Response<User> response = new Response<>();
+        Response response = new Response<>();
         {
             response.setHttpStatus(OK);
             User user = User.builder()
                     .name("aa")
                     .build();
             long id = 11;
-            Mockito.when(userService.update(id, user)).thenReturn(response);
-            ResponseEntity<User> responseEntity = userController.updateInfo(user, id);
+
+            Mockito.when(userService.update(id, user))
+                    .thenReturn(response);
+
+            ResponseEntity<?> responseEntity = userController.updateInfo(user, id);
+
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
         }

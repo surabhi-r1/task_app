@@ -68,7 +68,7 @@ public class TaskServiceImpl implements TaskService {
 
             paginationResponse.setData(tasks);
             response.setResponse(paginationResponse);
-            return response;
+           // return response;
 
         } catch (Exception e) {
             log.error("operation = getAllTasks, status = ERROR, msg = error in getAllTasks", e);
@@ -81,7 +81,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Response<?> add(Task task) {
         log.info("operation = add, status = IN_PROGRESS, message = add all tasks");
-        Response<Task> response = new Response<>();
+        Response<?> response = new Response<>();
         try {
             TaskEntity taskEntity = new TaskEntity();
             BeanUtils.copyProperties(task, taskEntity);
@@ -101,7 +101,6 @@ public class TaskServiceImpl implements TaskService {
 
             log.info("operation = add, status = SUCCESS, message = add all tasks");
             response.setHttpStatus(HttpStatus.CREATED);
-
             return response;
         } catch (Exception e) {
             log.error("operation = add, status = ERROR, msg = error in add", e);
@@ -140,8 +139,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public Response<Task> update(Long id, Task task) {
-        Response<Task> response = new Response<>();
+    public Response<?> update(Long id, Task task) {
+        Response<?> response = new Response<>();
         try {
             log.info("operation = updateTask, status = IN_PROGRESS, message = get task by id");
             //throws Exception
@@ -154,6 +153,7 @@ public class TaskServiceImpl implements TaskService {
                         .ifPresent(tasks::setDescription);
 
                 tasks.setName(tasks.getName());
+                tasks.setDescription(tasks.getDescription());
 
                 taskRepository.save(tasks);
                 log.info("operation = updateTask, status = SUCCESS, message = get task by id");

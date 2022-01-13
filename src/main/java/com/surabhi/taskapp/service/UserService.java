@@ -13,7 +13,7 @@ public interface UserService {
 
     Response<?> add(User user);
 
-    Response<User> update(Long id, User user);
+    Response<?> update(Long id, User user);
 
     Response<User> getById(Long id);
 

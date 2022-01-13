@@ -13,7 +13,7 @@ public interface TaskService {
 
     Response<?> add(Task task);
 
-    Response<Task> update(Long id, Task task);
+    Response<?> update(Long id, Task task);
 
     Response<?> delete(Long id);
 

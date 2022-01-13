@@ -58,9 +58,9 @@ public class TaskController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Task> updateTask(@RequestBody Task task, @PathVariable Long id) {
+    public ResponseEntity<?> updateTask(@RequestBody Task task, @PathVariable Long id) {
         log.info("api = /tasks, method = PUT, status = IN_PROGRESS");
-        Response<Task> response = taskService.update(id, task);
+        Response<?> response = taskService.update(id, task);
         log.info("api = /tasks, method = PUT, status = SUCCESS");
         return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
     }

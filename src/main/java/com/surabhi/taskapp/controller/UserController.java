@@ -43,9 +43,9 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<User> updateInfo(@RequestBody User user, @PathVariable Long id) {
+    public ResponseEntity<?> updateInfo(@RequestBody User user, @PathVariable Long id) {
         log.info("api = /info, method = PUT, status = IN_PROGRESS");
-        Response<User> response = userService.update(id, user);
+        Response<?> response = userService.update(id, user);
         log.info("api = /info, method = PUT, status = SUCCESS");
         return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
     }

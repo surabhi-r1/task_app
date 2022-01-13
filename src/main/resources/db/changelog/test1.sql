@@ -1,0 +1,1 @@
+ALTER TABLE test_liquibase drop column name;

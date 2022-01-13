@@ -91,6 +91,12 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+
+
+        <dependency>
             <groupId>javax.persistence</groupId>
             <artifactId>javax.persistence-api</artifactId>
         </dependency>
@@ -102,14 +108,17 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.2</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/com/intentwise/amscontent/service/amazon/entity/*</exclude>
+                        <exclude>**/com/intentwise/amscontent/service/amazon/entity/**/*</exclude>
                         <exclude>**/com/intentwise/amscontent/AmsContentApplication.class</exclude>
+                        <exclude>**/com/surabhi/taskapp/dto/**/*</exclude>
+                        <exclude>**/com/surabhi/taskapp/entity/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -127,6 +136,14 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <configuration>
+                    <propertyFile>src/main/resources/liquibase.properties</propertyFile>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 

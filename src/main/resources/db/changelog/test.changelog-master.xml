@@ -1,0 +1,10 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="task_app_v1.sql" relativeToChangelogFile="true"/>
+    <!--    <include file="test1.sql" relativeToChangelogFile="true"/>-->
+    <!--    <include file="test2.sql" relativeToChangelogFile="true"/>-->
+    <!--    <include file="test3.sql" relativeToChangelogFile="true"/>-->
+
+</databaseChangeLog>

@@ -1,13 +1,12 @@
 package com.surabhi.taskapp.service.impl;
 
+import com.surabhi.taskapp.dto.SubTask;
 import com.surabhi.taskapp.dto.Task;
 import com.surabhi.taskapp.entity.SubTaskEntity;
 import com.surabhi.taskapp.entity.TaskEntity;
-import com.surabhi.taskapp.repository.SubTaskRepository;
 import com.surabhi.taskapp.repository.TaskRepository;
 import com.surabhi.taskapp.response.PaginationResponse;
 import com.surabhi.taskapp.response.Response;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -19,18 +18,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import javax.xml.ws.http.HTTPException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TaskServiceImplTest {
     @Mock
     TaskRepository taskRepository;
-    @Mock
-    SubTaskRepository subTaskRepository;
+
     TaskServiceImpl taskService;
 
     @BeforeEach
@@ -50,16 +46,32 @@ class TaskServiceImplTest {
 
     }
 
+//    @Test
+//    void deleteError() {
+//        long id = 11;
+//        Mockito.doNothing().when(taskRepository).deleteById(id);
+//        Response<?> response = taskService.delete(id);
+//        assertEquals(HttpStatus.OK, response.getHttpStatus());
+//
+//    }
+
     @Test
     void getAll() {
         Pageable pageable = PageRequest.of(0, 20);
+
+        Set<SubTaskEntity> subTaskEntities = new HashSet<>();
+        SubTaskEntity subTaskEntity = SubTaskEntity.builder()
+                .id(11L)
+                .build();
+        subTaskEntities.add(subTaskEntity);
         List<TaskEntity> taskEntities = new ArrayList<>();
         TaskEntity taskEntity = TaskEntity.builder()
                 .name("aaaa")
                 .description("aaaaa")
+                .subTaskEntityList(subTaskEntities)
                 .id(11L)
-
                 .build();
+
         taskEntities.add(taskEntity);
         Page<TaskEntity> page1 = new PageImpl<>(taskEntities, pageable, 1L);
         Mockito.when(taskRepository.findAll(pageable)).thenReturn(page1);
@@ -72,62 +84,112 @@ class TaskServiceImplTest {
         assertEquals("aaaaa", response1.getResponse().getData().get(0).getDescription());
     }
 
-    //
-//        Pageable pageable = PageRequest.of(0, 20);
-//        Response<PaginationResponse<List<Task>>> response = new Response<>();
-//        response.setHttpStatus(HttpStatus.OK);
-
-
-//        // mock outer class
-//        Mockito.when(taskRepository.getAll(pageable));
-//
-//        //call actual method
-//        Response<PaginationResponse<List<Task>>> taskService.getAll(pageable);
-//
-//
-//        Response<PaginationResponse<List<Task>>> response = new Response<>();
-//        response.setHttpStatus(HttpStatus.OK);
-    // Page<TaskEntity> page=
-    //PaginationResponse<List<Task>> paginationResponse = new PaginationResponse<>();
-
-//        List<Task> tasks = new ArrayList<>();
-//        Task task = Task.builder()
-//                .name("aaa")
-//                .description("aaaaa")
-//                .build();
-//        tasks.add(task);
-
-    //  paginationResponse.setData(tasks);
-    // paginationResponse.setSize(5);
-    //  paginationResponse.setPage(1);
-    //  response.setResponse(paginationResponse);
-
-    // List<TaskEntity> taskEntities=TaskEntity.builder().build();
-
 
     @Test
     void add() {
-
         Response<?> response = new Response<>();
-        response.setHttpStatus(HttpStatus.OK);
-        // List<Task> tasks= new ArrayList<>();
-        TaskEntity taskEntity = TaskEntity.builder()
+        response.setHttpStatus(HttpStatus.CREATED);
+
+        Set<SubTask> subTasks = new HashSet<>();
+
+        SubTask subTask = new SubTask();
+        subTask.setName("aa");
+
+        subTasks.add(subTask);
+
+
+        Task task = Task.builder()
                 .id(11L)
                 .name("anu")
-                .build();
-        Set<SubTaskEntity> subTaskEntitySet = new HashSet<>();
-        SubTaskEntity subTaskEntity = SubTaskEntity.builder()
-                .id(11L)
-                .name("asha")
+                .subTasks(subTasks)
                 .build();
 
-        taskEntity.setSubTaskEntityList(subTaskEntitySet);
+        Mockito.when(taskRepository.save(Mockito.any())).thenReturn(null);
 
-        Mockito.when(taskRepository.save(Mockito.any()))
-                .thenReturn(null);
+        Response<?> response1 = taskService.add(task);
 
-
-        Assertions.assertEquals(200, response.getHttpStatus());
+        assertEquals(HttpStatus.CREATED, response1.getHttpStatus());
     }
 
+
+
+    @Test
+    void addError() {
+        Response<?> response = new Response<>();
+        response.setHttpStatus(HttpStatus.CREATED);
+
+        Set<SubTask> subTasks = new HashSet<>();
+
+        SubTask subTask = new SubTask();
+        subTask.setName("aa");
+
+        subTasks.add(subTask);
+
+
+        Task task = Task.builder()
+                .id(11L)
+                .name("anu")
+                .subTasks(subTasks)
+                .build();
+
+        Mockito.when(taskRepository.save(Mockito.any()))
+                .thenReturn(new Exception(""));
+
+        Response<?> response1 = taskService.add(task);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response1.getHttpStatus());
+    }
+
+    @Test
+    void update() {
+        Response<?> response = new Response<>();
+        response.setHttpStatus(HttpStatus.OK);
+        // List<TaskEntity> taskEntities = new ArrayList<>();
+        TaskEntity taskEntity = TaskEntity.builder()
+                .description("aaa")
+                .name("anu")
+                .id(11L)
+                .build();
+        long id = 11;
+
+        Task task = Task.builder()
+                .name("aaa")
+                .description("aaaa")
+                .id(11L)
+                .build();
+
+        //  Mockito.doNothing().when(taskRepository.findById(id));
+        Mockito.when(taskRepository.findById(id))
+                .thenReturn(Optional.of(taskEntity));
+
+     //  Mockito.when(taskRepository.save(Mockito.any())).thenReturn(null).thenThrow(new HTTPException(500));
+        Mockito.when(taskRepository.save(Mockito.any())).thenReturn(null);
+
+        Response<?> response1 = taskService.update(id, task);
+
+        assertEquals(HttpStatus.OK, response1.getHttpStatus());
+    }
+
+
+    @Test
+    void getById() {
+        Response<Task> response = new Response<>();
+        response.setHttpStatus(HttpStatus.OK);
+        TaskEntity taskEntity = TaskEntity.builder()
+                .description("aaaa")
+                .name("aaa")
+                .id(11L)
+                .build();
+        long id = 11;
+
+        Mockito.when(taskRepository.findById(id))
+                .thenReturn(Optional.of(taskEntity));
+
+        Response<Task> response1 = taskService.getById(id);
+
+        assertEquals(HttpStatus.OK, response1.getHttpStatus());
+        assertEquals("aaa", response1.getResponse().getName());
+        assertEquals("aaaa", response1.getResponse().getDescription());
+        assertEquals(11, response1.getResponse().getId());
+    }
 }
