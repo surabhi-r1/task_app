@@ -1,1 +1,1 @@
-ALTER TABLE test_liquibase drop column name;
+ALTER TABLE task_entity ADD column nameS;

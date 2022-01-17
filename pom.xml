@@ -119,6 +119,11 @@
                         <exclude>**/com/intentwise/amscontent/AmsContentApplication.class</exclude>
                         <exclude>**/com/surabhi/taskapp/dto/**/*</exclude>
                         <exclude>**/com/surabhi/taskapp/entity/**/*</exclude>
+                        <exclude>**/com/surabhi/taskapp/response/**/*</exclude>
+                        <exclude>**/com/surabhi/taskapp/repository/**/*</exclude>
+                        <exclude>**/com/surabhi/taskapp/mapper/**/*</exclude>
+
+
                     </excludes>
                 </configuration>
                 <executions>
