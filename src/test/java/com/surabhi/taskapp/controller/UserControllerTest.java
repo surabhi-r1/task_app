@@ -112,25 +112,25 @@ class UserControllerTest {
      * then returns response
      * scenario SUCCESS
      */
-    @Test
-    void update() {
-        Response response = new Response<>();
-        {
-            response.setHttpStatus(OK);
-            User user = User.builder()
-                    .name("aa")
-                    .build();
-            long id = 11;
-
-            Mockito.when(userService.update(id, user))
-                    .thenReturn(response);
-
-            ResponseEntity<?> responseEntity = userController.updateInfo(user, id);
-
-            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-
-        }
-    }
+//    @Test
+//    void update() {
+//        Response response = new Response<>();
+//        {
+//            response.setHttpStatus(OK);
+//            User user = User.builder()
+//                    .name("aa")
+//                    .build();
+//            long id = 11;
+//
+//            Mockito.when(userService.update(id, user))
+//                    .thenReturn(response);
+//
+//            ResponseEntity<?> responseEntity = userController.updateInfo(user, id);
+//
+//            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+//
+//        }
+//    }
 
     /*
      * testing the getAll api = /user method = GET

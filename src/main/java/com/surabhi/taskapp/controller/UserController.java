@@ -1,5 +1,6 @@
 package com.surabhi.taskapp.controller;
 
+import com.surabhi.taskapp.dto.Task;
 import com.surabhi.taskapp.dto.User;
 import com.surabhi.taskapp.response.PaginationResponse;
 import com.surabhi.taskapp.response.Response;
@@ -42,13 +43,13 @@ public class UserController {
 
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateInfo(@RequestBody User user, @PathVariable Long id) {
-        log.info("api = /info, method = PUT, status = IN_PROGRESS");
-        Response<?> response = userService.update(id, user);
-        log.info("api = /info, method = PUT, status = SUCCESS");
-        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
-    }
+//    @PutMapping(value = "/{id}")
+//    public ResponseEntity<?> updateInfo(@RequestBody User user, @PathVariable Long id) {
+//        log.info("api = /info, method = PUT, status = IN_PROGRESS");
+//        Response<?> response = userService.update(id, user);
+//        log.info("api = /info, method = PUT, status = SUCCESS");
+//        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getInfoById(@PathVariable Long id) {
@@ -64,6 +65,13 @@ public class UserController {
         log.info("api = /info/id, method = DELETE, status = IN_PROGRESS");
         Response<?> response = userService.delete(id);
         log.info("api = /info/id, method = DELETE, status = SUCCESS");
+        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
+    }
+    @PutMapping(value= "/{id}")
+    public ResponseEntity<?> getNewUserById(@PathVariable long id, @RequestBody User user) {
+        log.info("api = /tasks, method = GET, status = IN_PROGRESS");
+        Response<?> response = userService.getNewById(id,user);
+        log.info("api = /tasks, method = GET, status = SUCCESS");
         return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
     }
 

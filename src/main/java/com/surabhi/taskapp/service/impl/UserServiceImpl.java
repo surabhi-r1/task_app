@@ -1,8 +1,10 @@
 package com.surabhi.taskapp.service.impl;
 
 import com.surabhi.taskapp.dto.Address;
+import com.surabhi.taskapp.dto.Task;
 import com.surabhi.taskapp.dto.User;
 import com.surabhi.taskapp.entity.AddressEntity;
+import com.surabhi.taskapp.entity.TaskEntity;
 import com.surabhi.taskapp.entity.UserEntity;
 import com.surabhi.taskapp.repository.AddressRepository;
 import com.surabhi.taskapp.repository.UserRepository;
@@ -107,45 +109,45 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
-    @Override
-    @Transactional
-    public Response<?> update(Long id, User user) {
-        Response<?> response = new Response<>();
-        log.info("operation = update, status = IN_PROGRESS, message = update user info");
-        try {
-            Optional<UserEntity> entity = userRepository.findById(id);
-            if (entity.isPresent()) {
-                UserEntity userEntity = entity.get();
-
-                Optional.ofNullable(user.getName())
-                        .ifPresent(userEntity::setName);
-
-                Optional.ofNullable(user.getRegNo())
-                        .ifPresent(userEntity::setRegNo);
-
-                Optional.ofNullable(user.getAge())
-                        .ifPresent(userEntity::setAge);
-
-                Optional.ofNullable(user.getGender())
-                        .ifPresent(userEntity::setGender);
-
-                Optional.ofNullable(user.getMobileNumber())
-                        .ifPresent(userEntity::setMobileNumber);
-
-                userRepository.save(userEntity);
-                log.info("operation = update, status = SUCCESS, message = update user info");
-                response.setHttpStatus(HttpStatus.OK);
-
-            } else {
-                response.setHttpStatus(HttpStatus.NOT_FOUND);
-            }
-            return response;
-        } catch (Exception e) {
-            log.error("operation = update, status = ERROR, msg = error in update ", e);
-            response.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-            return response;
-        }
-    }
+//    @Override
+//    @Transactional
+//    public Response<?> update(Long id, User user) {
+//        Response<?> response = new Response<>();
+//        log.info("operation = update, status = IN_PROGRESS, message = update user info");
+//        try {
+//            Optional<UserEntity> entity = userRepository.findById(id);
+//            if (entity.isPresent()) {
+//                UserEntity userEntity = entity.get();
+//
+//                Optional.ofNullable(user.getName())
+//                        .ifPresent(userEntity::setName);
+//
+//                Optional.ofNullable(user.getRegNo())
+//                        .ifPresent(userEntity::setRegNo);
+//
+//                Optional.ofNullable(user.getAge())
+//                        .ifPresent(userEntity::setAge);
+//
+//                Optional.ofNullable(user.getGender())
+//                        .ifPresent(userEntity::setGender);
+//
+//                Optional.ofNullable(user.getMobileNumber())
+//                        .ifPresent(userEntity::setMobileNumber);
+//
+//                userRepository.save(userEntity);
+//                log.info("operation = update, status = SUCCESS, message = update user info");
+//                response.setHttpStatus(HttpStatus.OK);
+//
+//            } else {
+//                response.setHttpStatus(HttpStatus.NOT_FOUND);
+//            }
+//            return response;
+//        } catch (Exception e) {
+//            log.error("operation = update, status = ERROR, msg = error in update ", e);
+//            response.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+//            return response;
+//        }
+//    }
 
     @Override
     public Response<User> getById(Long id) {
@@ -190,5 +192,30 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public Response<?> getNewById(long id, User user) {
+        Response<?> response = new Response<>();
+        try {
+            Optional<UserEntity> userEntity = userRepository.findById(id);
 
+            if (userEntity.isPresent()) {
+                TaskEntity taskEntity = TaskEntity.builder()
+                        .name("abhishek").build();
+                UserEntity userEntity1 = userEntity.get();
+                Optional.ofNullable(user.getName())
+                        .ifPresent(userEntity1::setName);
+
+                userEntity1.setName(taskEntity.getName());
+                userRepository.save(userEntity1);
+                response.setHttpStatus(HttpStatus.OK);
+
+            } else {
+                response.setHttpStatus(HttpStatus.NOT_FOUND);
+            }
+            return response;
+        } catch (Exception e) {
+            response.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            return response;
+        }
+    }
 }

@@ -91,26 +91,26 @@ class TaskControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
-
-    @Test
-    void update() {
-        Response response = new Response<>();
-        response.setHttpStatus(OK);
-        Task task = Task.builder()
-                .description("aaa")
-                .name("aa")
-                .build();
-        long id = 11;
-
-        Mockito.when(taskService.update(id, task))
-                .thenReturn(response);
-
-        ResponseEntity<?> responseEntity = taskController.updateTask(task, id);
-
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    }
-
-
+//
+//    @Test
+//    void update() {
+//        Response response = new Response<>();
+//        response.setHttpStatus(OK);
+//        Task task = Task.builder()
+//                .description("aaa")
+//                .name("aa")
+//                .build();
+//        long id = 11;
+//
+//        Mockito.when(taskService.update(id, task))
+//                .thenReturn(response);
+//
+//        ResponseEntity<?> responseEntity = taskController.updateTask(task, id);
+//
+//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+//    }
+//
+//
     /*
      * testing the bulk update api = /sov/table/v2 method = POST
      * given accountId, query, startDate, endDate, sort, aggregation, pageable
@@ -153,5 +153,17 @@ class TaskControllerTest {
         assertEquals("aaaaa", responseEntity.getBody().getData().get(0).getDescription());
     }
 
+@Test
+    void getNewById(){
+        Response response=new Response<>();
+        response.setHttpStatus(OK);
+        List<Task> task=new ArrayList<>();
+
+
+        Mockito.when(taskService.getNewById(task)).thenReturn(response);
+        ResponseEntity responseEntity=taskController.getNewTaskById(task);
+        assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
+
+}
 
 }

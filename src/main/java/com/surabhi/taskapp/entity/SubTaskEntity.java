@@ -25,8 +25,11 @@ public class SubTaskEntity {
     private Long taskEntityId;
 
     private String name;
+
     private String description;
+
     @CreationTimestamp
+    @Column(name = "created_date")
     private Date createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
