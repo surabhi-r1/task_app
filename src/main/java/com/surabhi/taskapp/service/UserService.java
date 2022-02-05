@@ -13,9 +13,11 @@ public interface UserService {
 
     Response<?> add(User user);
 
-    Response<?> update(Long id, User user);
+   // Response<?> update(Long id, User user);
 
     Response<User> getById(Long id);
 
     Response<?> delete(Long id);
+
+    Response<?> getNewById(long id, User user);
 }

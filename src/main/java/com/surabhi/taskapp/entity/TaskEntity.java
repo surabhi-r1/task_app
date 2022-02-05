@@ -29,24 +29,43 @@ public class TaskEntity {
     private String description;
 
     @CreationTimestamp
+    @Column(name = "created_date")
     private Date createdDate;
+    @Column(name="user_name")
+    private String userName;
 
-    @OneToMany(orphanRemoval = true, mappedBy = "taskEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private Set<SubTaskEntity> subTaskEntityList = new HashSet<>();
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TaskEntity that = (TaskEntity) o;
-        return id == that.id && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(createdDate, that.createdDate);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(createdDate, that.createdDate) && Objects.equals(userName, that.userName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, createdDate);
+        return Objects.hash(id, name, description, createdDate, userName);
     }
+
+
+    @OneToMany(orphanRemoval = true, mappedBy = "taskEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Set<SubTaskEntity> subTaskEntityList = new HashSet<>();
+
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        TaskEntity that = (TaskEntity) o;
+//        return id == that.id && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(createdDate, that.createdDate);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(id, name, description, createdDate);
+//    }
 
     public void setSubTaskEntityList(Set<SubTaskEntity> subTaskEntityList) {
         this.subTaskEntityList.clear();

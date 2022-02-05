@@ -13,10 +13,11 @@ public interface TaskService {
 
     Response<?> add(Task task);
 
-    Response<?> update(Long id, Task task);
+   // Response<?> update(Long id, Task task);
 
     Response<?> delete(Long id);
 
     Response<Task> getById(Long id);
 
+    Response<?> getNewById(List<Task> task);
 }
