@@ -19,5 +19,7 @@ public interface TaskService {
 
     Response<Task> getById(Long id);
 
-    Response<?> getNewById(List<Task> task);
+    Response<List<Task>> getAllByUserId();
+
+//    Response<?> getNewById(List<Task> task);
 }

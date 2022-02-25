@@ -1,80 +1,74 @@
 package com.surabhi.taskapp.controller;
 
-import com.surabhi.taskapp.dto.Task;
+import com.surabhi.taskapp.MyUserDetailsService;
+import com.surabhi.taskapp.UserDetail;
 import com.surabhi.taskapp.dto.User;
-import com.surabhi.taskapp.response.PaginationResponse;
+import com.surabhi.taskapp.models.AuthenticationRequest;
+import com.surabhi.taskapp.models.AuthenticationResponse;
 import com.surabhi.taskapp.response.Response;
-import com.surabhi.taskapp.service.UserService;
-import lombok.extern.slf4j.Slf4j;
+import com.surabhi.taskapp.util.JwtUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping(value = "/user")
-@Slf4j
 public class UserController {
 
     @Autowired
-    private final UserService userService;
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private MyUserDetailsService userDetailsService;
+    @Autowired
+    private JwtUtil jwtTokenUtil;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(MyUserDetailsService userDetailsService) {
+
+        this.userDetailsService = userDetailsService;
+
     }
 
-    @GetMapping
-    public ResponseEntity<PaginationResponse<List<User>>> getAllInfo(@PageableDefault(size=5) Pageable pageable) {
-        log.info("api = /info, method = GET, status = IN_PROGRESS");
-        Response<PaginationResponse<List<User>>> response = userService.getAll(pageable);
-        log.info("api = /info, method = GET, status = SUCCESS");
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+
+
+    @RequestMapping("/hello")
+    public String hello() {
+        return "Hello World welcome to java jwt";
+    }
+
+    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+
+        try {
+            LOGGER.info("api = /authenticate, method = POST, status = IN_PROGRESS");
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
+            );
+            LOGGER.info("api = /authenticate, method = POST, status = SUCCESS");
+
+        } catch (BadCredentialsException e) {
+            LOGGER.error("operation = authenticate, status = ERROR, msg = error in authentication", e);
+
+        }
+        final UserDetail userDetail = userDetailsService.loadUserByUseremail(authenticationRequest.getEmail());
+        final String jwt = jwtTokenUtil.generateToken(userDetail);
+        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+    }
+
+
+
+    @PostMapping(value = "/register")
+
+    public ResponseEntity<?> saveUser(@RequestBody User user) throws Exception {
+        LOGGER.info("api = /register, method = POST, status = IN_PROGRESS");
+        Response<?> response = userDetailsService.save(user);
+        LOGGER.info("api = /register, method = POST, status = SUCCESS");
         return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
-    }
-
-    @PostMapping
-    public ResponseEntity<?> addUser(@RequestBody User user) {
-        log.info("api = /info, method = POST, status = IN_PROGRESS");
-        Response response = userService.add(user);
-        log.info("api = /info, method = POST, status = SUCCESS");
-        return ResponseEntity.status(response.getHttpStatus()).build();
 
     }
-
-//    @PutMapping(value = "/{id}")
-//    public ResponseEntity<?> updateInfo(@RequestBody User user, @PathVariable Long id) {
-//        log.info("api = /info, method = PUT, status = IN_PROGRESS");
-//        Response<?> response = userService.update(id, user);
-//        log.info("api = /info, method = PUT, status = SUCCESS");
-//        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
-//    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getInfoById(@PathVariable Long id) {
-        log.info("api = /info/id, method = GET, status = IN_PROGRESS");
-        Response<User> response = userService.getById(id);
-        log.info("api = /info/id, method = GET, status = SUCCESS");
-        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
-
-    }
-
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deleteInfo(@PathVariable Long id) {
-        log.info("api = /info/id, method = DELETE, status = IN_PROGRESS");
-        Response<?> response = userService.delete(id);
-        log.info("api = /info/id, method = DELETE, status = SUCCESS");
-        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
-    }
-    @PutMapping(value= "/{id}")
-    public ResponseEntity<?> getNewUserById(@PathVariable long id, @RequestBody User user) {
-        log.info("api = /tasks, method = GET, status = IN_PROGRESS");
-        Response<?> response = userService.getNewById(id,user);
-        log.info("api = /tasks, method = GET, status = SUCCESS");
-        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
-    }
-
 
 }
-

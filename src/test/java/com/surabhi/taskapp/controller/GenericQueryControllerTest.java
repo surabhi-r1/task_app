@@ -3,7 +3,6 @@ package com.surabhi.taskapp.controller;
 import com.surabhi.taskapp.dto.Task;
 import com.surabhi.taskapp.response.Response;
 import com.surabhi.taskapp.service.impl.GenericTaskServiceImpl;
-import liquibase.pro.packaged.L;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -12,7 +11,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -9,5 +9,6 @@ import java.util.List;
 public interface TaskRepository extends PagingAndSortingRepository<TaskEntity, Long> {
 
     List<TaskEntity> findByIdIn(List<Long> id);
+    List<TaskEntity> findAllByUserId(Integer userId);
 
 }

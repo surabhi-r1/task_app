@@ -1,19 +1,15 @@
 package com.surabhi.taskapp.service.impl;
 
 import com.surabhi.taskapp.dto.Task;
-import com.surabhi.taskapp.dto.User;
-import com.surabhi.taskapp.entity.TaskEntity;
-import com.surabhi.taskapp.entity.UserEntity;
+
 import com.surabhi.taskapp.mapper.TaskMapper;
 import com.surabhi.taskapp.repository.TaskJdbcRepository;
 import com.surabhi.taskapp.response.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

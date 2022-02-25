@@ -31,9 +31,9 @@ public class TaskEntity {
     @CreationTimestamp
     @Column(name = "created_date")
     private Date createdDate;
-    @Column(name="user_name")
-    private String userName;
+    @Column(name="user_id")
 
+    private Integer userId;
 
 
     @Override
@@ -41,12 +41,12 @@ public class TaskEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TaskEntity that = (TaskEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(createdDate, that.createdDate) && Objects.equals(userName, that.userName);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(createdDate, that.createdDate) ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, createdDate, userName);
+        return Objects.hash(id, name, description, createdDate);
     }
 
 

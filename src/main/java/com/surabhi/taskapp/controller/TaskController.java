@@ -4,6 +4,7 @@ import com.surabhi.taskapp.dto.Task;
 import com.surabhi.taskapp.response.PaginationResponse;
 import com.surabhi.taskapp.response.Response;
 import com.surabhi.taskapp.service.TaskService;
+import com.surabhi.taskapp.util.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
@@ -23,31 +24,41 @@ public class TaskController {
     @Autowired
     private final TaskService taskService;
 
+    @Autowired
+    private final UserUtils userUtils;
 
-    public TaskController(TaskService taskService) {
+
+    public TaskController(TaskService taskService,UserUtils userUtils) {
         this.taskService = taskService;
+        this.userUtils=userUtils;
     }
 
     private static final Logger log = LoggerFactory.getLogger(TaskController.class);
 
 //    http://localhost:8080/swagger-ui.html
 
+//    @GetMapping
+//    @PageableAsQueryParam
+//    public ResponseEntity<PaginationResponse<List<Task>>> getAllTasks(@PageableDefault(size = 5) Pageable pageable) {
+//        log.info("api = /tasks, method = GET, status = IN_PROGRESS");
+//        Response<PaginationResponse<List<Task>>> response = taskService.getAll(pageable);
+//        log.info("api = /tasks, method = GET, status = SUCCESS");
+//        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
+//    }
     @GetMapping
-    @PageableAsQueryParam
-    public ResponseEntity<PaginationResponse<List<Task>>> getAllTasks(@PageableDefault(size = 5) Pageable pageable) {
-        log.info("api = /tasks, method = GET, status = IN_PROGRESS");
-        Response<PaginationResponse<List<Task>>> response = taskService.getAll(pageable);
-        log.info("api = /tasks, method = GET, status = SUCCESS");
+    public ResponseEntity<List<Task>> getAllDetailsByUserId(){
+        log.info("api = /info, method = GET, status = IN_PROGRESS");
+        Response<List<Task>> response=taskService.getAllByUserId();
+        log.info("api = /info, method = GET, status = SUCCESS");
         return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
     }
-
-    @PutMapping
-    public ResponseEntity<?> getNewTaskById( @RequestBody List<Task> task) {
-        log.info("api = /tasks, method = GET, status = IN_PROGRESS");
-        Response<?> response = taskService.getNewById(task);
-        log.info("api = /tasks, method = GET, status = SUCCESS");
-        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
-    }
+//    @PutMapping
+//    public ResponseEntity<?> getNewTaskById( @RequestBody List<Task> task) {
+//        log.info("api = /tasks, method = GET, status = IN_PROGRESS");
+//        Response<?> response = taskService.getNewById(task);
+//        log.info("api = /tasks, method = GET, status = SUCCESS");
+//        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
+//    }
 
 
     @GetMapping("/{id}")
