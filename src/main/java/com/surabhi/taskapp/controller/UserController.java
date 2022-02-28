@@ -8,17 +8,15 @@ import com.surabhi.taskapp.models.AuthenticationResponse;
 import com.surabhi.taskapp.response.Response;
 import com.surabhi.taskapp.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+
 @Slf4j
 @RestController
 public class UserController {
-
 
     private final AuthenticationManager authenticationManager;
 
@@ -33,8 +31,6 @@ public class UserController {
 
         this.jwtTokenUtil = jwtTokenUtil;
     }
-
-
 
 
     @RequestMapping("/hello")

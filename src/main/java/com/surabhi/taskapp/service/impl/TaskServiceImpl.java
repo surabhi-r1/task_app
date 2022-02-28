@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,7 +73,7 @@ public class TaskServiceImpl implements TaskService {
 
             paginationResponse.setData(tasks);
             response.setResponse(paginationResponse);
-            // return response;
+
 
         } catch (Exception e) {
             log.error("operation = getAllTasks, status = ERROR, msg = error in getAllTasks", e);
@@ -87,7 +88,6 @@ public class TaskServiceImpl implements TaskService {
         log.info("operation = add, status = IN_PROGRESS, message = add all tasks");
         Response<?> response = new Response<>();
         try {
-//           task.setUserId(userUtils.getUser().getUserId());
             TaskEntity taskEntity = new TaskEntity();
             BeanUtils.copyProperties(task, taskEntity);
 
@@ -130,7 +130,6 @@ public class TaskServiceImpl implements TaskService {
                 log.info("operation = getById, status=SUCCESS, message= get task by id");
                 response.setHttpStatus(HttpStatus.OK);
                 response.setResponse(task1);
-                //  return response;
             } else {
                 response.setHttpStatus(HttpStatus.NOT_FOUND);
             }
@@ -142,7 +141,38 @@ public class TaskServiceImpl implements TaskService {
             return response;
         }
     }
+    @Override
+    @Transactional
+    public Response<?> update(Long id, Task task) {
+        Response<?> response = new Response<>();
+        try {
+            log.info("operation = updateTask, status = IN_PROGRESS, message = get task by id");
 
+            Optional<TaskEntity> taskEntity = taskRepository.findById(id);
+            if (taskEntity.isPresent()) {
+                TaskEntity tasks = taskEntity.get();
+                Optional.ofNullable(task.getName())
+                        .ifPresent(tasks::setName);
+                Optional.ofNullable(task.getDescription())
+                        .ifPresent(tasks::setDescription);
+
+                tasks.setName(tasks.getName());
+                tasks.setDescription(tasks.getDescription());
+
+                taskRepository.save(tasks);
+                log.info("operation = updateTask, status = SUCCESS, message = get task by id");
+                response.setHttpStatus(HttpStatus.OK);
+            } else {
+                response.setHttpStatus(HttpStatus.NOT_FOUND);
+            }
+            return response;
+        } catch (Exception e) {
+            log.error("operation = updateTask, status = ERROR, msg = error in add details", e);
+            response.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            return response;
+        }
+
+    }
     @Override
     public Response<List<Task>> getAllByUserId() {
         Response<List<Task>> response = new Response<>();

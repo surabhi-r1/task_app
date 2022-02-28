@@ -32,6 +32,7 @@ public class MyUserDetailsService implements UserDetailsService {
         UserEntity user = userRepository.findByEmail(email);
 
         if (user == null) {
+            log.error("operation =loadUserByUsername status = ERROR, msg = error in loadUserByUsername");
             throw new UsernameNotFoundException("User not found with username: " + email);
         }
 
@@ -45,9 +46,11 @@ public class MyUserDetailsService implements UserDetailsService {
     public UserDetail loadUserByUseremail(String email) throws UsernameNotFoundException {
 
         log.info("operation =loadUserByUseremail, status = IN_PROGRESS, message = load user by User email");
+
         UserEntity user = userRepository.findByEmail(email);
 
         if (user == null) {
+            log.error("operation =loadUserByUseremail, status = ERROR, msg = error in loadUserByUseremail");
             throw new UsernameNotFoundException("User not found: " + email);
         }
 

@@ -34,7 +34,7 @@ class TaskControllerTest {
     @BeforeEach
     void multiply() {
         MockitoAnnotations.openMocks(this);
-        this.taskController = new TaskController(taskService,userUtils);
+        this.taskController = new TaskController(taskService);
         System.out.println("running before each");
     }
 
@@ -57,9 +57,9 @@ class TaskControllerTest {
         ResponseEntity<Task> responseEntity = taskController.getTaskById(id);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals("aaa",responseEntity.getBody().getName());
-        assertEquals("aaaa",responseEntity.getBody().getDescription());
-        assertEquals(11,responseEntity.getBody().getId());
+        assertEquals("aaa", responseEntity.getBody().getName());
+        assertEquals("aaaa", responseEntity.getBody().getDescription());
+        assertEquals(11, responseEntity.getBody().getId());
     }
 
     @Test
@@ -94,79 +94,34 @@ class TaskControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
-//
-//    @Test
-//    void update() {
-//        Response response = new Response<>();
-//        response.setHttpStatus(OK);
-//        Task task = Task.builder()
-//                .description("aaa")
-//                .name("aa")
-//                .build();
-//        long id = 11;
-//
-//        Mockito.when(taskService.update(id, task))
-//                .thenReturn(response);
-//
-//        ResponseEntity<?> responseEntity = taskController.updateTask(task, id);
-//
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//    }
-//
-//
-    /*
-     * testing the bulk update api = /sov/table/v2 method = POST
-     * given accountId, query, startDate, endDate, sort, aggregation, pageable
-     * then returns ResponseEntity<PaginationResponse<Table>>
-     * scenario SUCCESS
-     */
-//    @Test
-//    void getAll() {
-//        // form response or request
-//        Pageable pageable = PageRequest.of(0, 20);
-//
-//        Response<PaginationResponse<List<Task>>> response = new Response<>();
-//        response.setHttpStatus(HttpStatus.OK);
-//        PaginationResponse<List<Task>> paginationResponse = new PaginationResponse<>();
-//        List<Task> tasks = new ArrayList<>();
-//        Task task = Task.builder()
-//                .name("aaa")
-//                .description("aaaaa")
-//                .build();
-//
-//        tasks.add(task);
-//        paginationResponse.setData(tasks);
-//        paginationResponse.setSize(5);
-//        paginationResponse.setPage(1);
-//        response.setResponse(paginationResponse);
-//
-//
-//        // mock outer class
-//        Mockito.when(taskService.getAll(pageable))
-//                .thenReturn(response);
-//
-//
-//        //call actual method
-//        ResponseEntity<PaginationResponse<List<Task>>> responseEntity = taskController.getAllTasks(pageable);
-//
-//        //assert;
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        assertEquals(1, responseEntity.getBody().getData().size());
-//        assertEquals("aaa", responseEntity.getBody().getData().get(0).getName());
-//        assertEquals("aaaaa", responseEntity.getBody().getData().get(0).getDescription());
-//    }
 
-//@Test
-//    void getNewById(){
-//        Response response=new Response<>();
-//        response.setHttpStatus(OK);
-//        List<Task> task=new ArrayList<>();
-//
-//
-//        Mockito.when(taskService.getNewById(task)).thenReturn(response);
-//        ResponseEntity responseEntity=taskController.getNewTaskById(task);
-//        assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
-//
-//}
+    @Test
+    void update() {
+        Response response = new Response<>();
+        response.setHttpStatus(OK);
+        Task task = Task.builder()
+                .description("aaa")
+                .name("aa")
+                .build();
+        long id = 11;
+
+        Mockito.when(taskService.update(id, task))
+                .thenReturn(response);
+
+        ResponseEntity<?> responseEntity = taskController.updateTask(task, id);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    void getAllDetailsByUserId() {
+        Response response = new Response<>();
+        response.setHttpStatus(OK);
+        Mockito.when(taskService.getAllByUserId()).thenReturn(response);
+        ResponseEntity<?> responseEntity = taskController.getAllDetailsByUserId();
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+
 
 }

@@ -4,7 +4,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 
@@ -20,18 +20,13 @@ public class SubTaskEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "task_entity_id", insertable = false, updatable = false)
     private Long taskEntityId;
-
     private String name;
-
     private String description;
-
     @CreationTimestamp
     @Column(name = "created_date")
-    private Date createdDate;
-
+    private Timestamp createdDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_entity_id")
     private TaskEntity taskEntity;

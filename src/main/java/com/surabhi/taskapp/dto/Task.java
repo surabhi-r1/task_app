@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class Task {
     private String name;
     private String description;
     @JsonProperty("created_date")
-    private Date createdDate;
+    private Timestamp createdDate;
     @JsonProperty("user_id")
     private Integer userId;
     private Set<SubTask> subTasks;

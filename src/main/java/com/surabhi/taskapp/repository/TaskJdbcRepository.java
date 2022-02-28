@@ -16,8 +16,6 @@ import java.util.List;
 @Component
 public class TaskJdbcRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
-
-
     private final TaskQueries taskQueries;
 
     public TaskJdbcRepository(@Qualifier("applicationDataSource") DataSource dataSource, TaskQueries taskQueries) {
@@ -34,13 +32,10 @@ public class TaskJdbcRepository {
     }
     private String getQuery(String queryName) {
         String query = null;
-
         if ("findAll".equals(queryName)) {
             query = taskQueries.getFindAll();
         }
-
         Assert.isTrue(query != null, "no sql query mapped for queryName " + queryName);
-
         return query;
     }
 

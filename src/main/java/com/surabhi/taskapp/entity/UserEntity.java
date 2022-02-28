@@ -17,17 +17,17 @@ import java.util.Objects;
 @NoArgsConstructor
 @Table(name = "user", schema = "public")
 public class UserEntity {
+
     @Id
     private int id;
     private String name;
     private String password;
-
     @Column(name = "email", unique = true)
     private String email;
 
-//    public void setPassword(String password) {
-//        this.password = new BCryptPasswordEncoder().encode(password);
-//    }
+    public void setPassword(String password) {
+        this.password = new BCryptPasswordEncoder().encode(password);
+    }
 
     @Override
     public boolean equals(Object o) {

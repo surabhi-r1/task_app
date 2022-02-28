@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
@@ -29,7 +30,7 @@ public class TaskEntity {
     private String description;
     @CreationTimestamp
     @Column(name = "created_date")
-    private Date createdDate;
+    private Timestamp createdDate;
     @Column(name="user_id")
     private Integer userId;
 

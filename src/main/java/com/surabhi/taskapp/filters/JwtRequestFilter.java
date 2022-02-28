@@ -16,12 +16,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
 @Component
 @Slf4j
 public class JwtRequestFilter extends OncePerRequestFilter {
-
     private final MyUserDetailsService myUserDetailsServiceImpl;
-
 
     private final JwtUtil jwtUtil;
 
@@ -30,12 +29,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         this.jwtUtil = jwtUtil;
     }
 
-
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
         try {
+
             log.info("operation = doFilterInternal, status = IN_PROGRESS, message =do filter internal");
             final String authorizationHeader = request.getHeader("Authorization");
             String email = null;
@@ -60,9 +59,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
             log.info("operation = doFilterInternal, status =SUCCESS, message =do filter internal");
+
         } catch (Exception e) {
+
             log.error("operation =doFilterInternal, status = ERROR, msg = error in doFilterInternal method", e);
             e.printStackTrace();
+
         }
 
     }
