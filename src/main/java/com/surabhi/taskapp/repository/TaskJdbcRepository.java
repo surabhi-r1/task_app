@@ -17,12 +17,12 @@ import java.util.List;
 public class TaskJdbcRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    //private final Queries queries;
+
     private final TaskQueries taskQueries;
-    //public TaskJdbcRepository(@Qualifier("applicationDataSource") DataSource dataSource, Queries queries) {
+
     public TaskJdbcRepository(@Qualifier("applicationDataSource") DataSource dataSource, TaskQueries taskQueries) {
         this.jdbcTemplate = initJdbcTemplate(dataSource);
-        //this.queries = queries;
+
         this.taskQueries=taskQueries;
     }
     private NamedParameterJdbcTemplate initJdbcTemplate(DataSource dataSource) {

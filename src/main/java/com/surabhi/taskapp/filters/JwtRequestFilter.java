@@ -3,10 +3,9 @@ package com.surabhi.taskapp.filters;
 import com.surabhi.taskapp.MyUserDetailsService;
 import com.surabhi.taskapp.UserDetail;
 import com.surabhi.taskapp.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -18,14 +17,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 @Component
+@Slf4j
 public class JwtRequestFilter extends OncePerRequestFilter {
-    @Autowired
-    private MyUserDetailsService myUserDetailsServiceImpl;
 
-    @Autowired
-    private JwtUtil jwtUtil;
-//    @Autowired
-//    private UserDetail userDetail;
+    private final MyUserDetailsService myUserDetailsServiceImpl;
+
+
+    private final JwtUtil jwtUtil;
+
+    public JwtRequestFilter(MyUserDetailsService myUserDetailsServiceImpl, JwtUtil jwtUtil) {
+        this.myUserDetailsServiceImpl = myUserDetailsServiceImpl;
+        this.jwtUtil = jwtUtil;
+    }
 
 
 
@@ -33,6 +36,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
+            log.info("operation = doFilterInternal, status = IN_PROGRESS, message =do filter internal");
             final String authorizationHeader = request.getHeader("Authorization");
             String email = null;
             String jwt = null;
@@ -55,7 +59,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
             }
             filterChain.doFilter(request, response);
+            log.info("operation = doFilterInternal, status =SUCCESS, message =do filter internal");
         } catch (Exception e) {
+            log.error("operation =doFilterInternal, status = ERROR, msg = error in doFilterInternal method", e);
             e.printStackTrace();
         }
 

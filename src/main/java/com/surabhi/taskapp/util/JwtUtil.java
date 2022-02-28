@@ -1,22 +1,12 @@
 package com.surabhi.taskapp.util;
 
-import com.surabhi.taskapp.MyUserDetailsService;
 import com.surabhi.taskapp.UserDetail;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +15,12 @@ import java.util.function.Function;
 @Service
 public class JwtUtil {
 
-    private String SECRET_KEY = "secret";
+
+    private final String SECRET_KEY;
+
+    public JwtUtil(@Value("${KEY}") String secret_key) {
+        SECRET_KEY = secret_key;
+    }
 
     public String extractUseremail(String token) {
         return extractClaim(token, Claims::getSubject);

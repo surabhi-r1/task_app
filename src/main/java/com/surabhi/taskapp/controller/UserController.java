@@ -7,32 +7,34 @@ import com.surabhi.taskapp.models.AuthenticationRequest;
 import com.surabhi.taskapp.models.AuthenticationResponse;
 import com.surabhi.taskapp.response.Response;
 import com.surabhi.taskapp.util.JwtUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-
+@Slf4j
 @RestController
 public class UserController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private MyUserDetailsService userDetailsService;
-    @Autowired
-    private JwtUtil jwtTokenUtil;
 
-    public UserController(MyUserDetailsService userDetailsService) {
+    private final AuthenticationManager authenticationManager;
+
+    private final MyUserDetailsService userDetailsService;
+
+    private final JwtUtil jwtTokenUtil;
+
+    public UserController(AuthenticationManager authenticationManager, MyUserDetailsService userDetailsService, JwtUtil jwtTokenUtil) {
+        this.authenticationManager = authenticationManager;
 
         this.userDetailsService = userDetailsService;
 
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+
 
 
     @RequestMapping("/hello")
@@ -44,14 +46,14 @@ public class UserController {
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
         try {
-            LOGGER.info("api = /authenticate, method = POST, status = IN_PROGRESS");
+            log.info("api = /authenticate, method = POST, status = IN_PROGRESS");
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
             );
-            LOGGER.info("api = /authenticate, method = POST, status = SUCCESS");
+            log.info("api = /authenticate, method = POST, status = SUCCESS");
 
         } catch (BadCredentialsException e) {
-            LOGGER.error("operation = authenticate, status = ERROR, msg = error in authentication", e);
+            log.error("operation = authenticate, status = ERROR, msg = error in authentication", e);
 
         }
         final UserDetail userDetail = userDetailsService.loadUserByUseremail(authenticationRequest.getEmail());
@@ -59,14 +61,11 @@ public class UserController {
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 
-
-
     @PostMapping(value = "/register")
-
     public ResponseEntity<?> saveUser(@RequestBody User user) throws Exception {
-        LOGGER.info("api = /register, method = POST, status = IN_PROGRESS");
+        log.info("api = /register, method = POST, status = IN_PROGRESS");
         Response<?> response = userDetailsService.save(user);
-        LOGGER.info("api = /register, method = POST, status = SUCCESS");
+        log.info("api = /register, method = POST, status = SUCCESS");
         return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
 
     }

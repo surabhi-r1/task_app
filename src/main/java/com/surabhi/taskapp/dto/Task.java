@@ -19,7 +19,7 @@ public class Task {
     private String description;
     @JsonProperty("created_date")
     private Date createdDate;
-    @JsonProperty("userId")
+    @JsonProperty("user_id")
     private Integer userId;
     private Set<SubTask> subTasks;
 }

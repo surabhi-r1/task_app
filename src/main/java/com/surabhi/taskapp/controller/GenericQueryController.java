@@ -14,32 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/genericQuery1")
+@RequestMapping(value = "/genericQuery")
 @Slf4j
 
 public class GenericQueryController {
 
-//    private final TaskJdbcRepository taskJdbcRepository;
-//
-//
-//
-//
-//    public GenericQueryController(TaskJdbcRepository taskJdbcRepository) {
-//        this.taskJdbcRepository = taskJdbcRepository;
-//    }
 
-//    @GetMapping
-//    public List<Task> getAllTask(@RequestParam("query") String queryName) {
-//        log.info("api = /genericQuery1, method = GET, status = IN_PROGRESS");
-//        log.info("api = /genericQuery1, method = GET, status = SUCCESS");
-//        return taskJdbcRepository.executeQuery(null, queryName, new TaskMapper());
-//
-//    }
-//    @GetMapping("/{id}")
-//    public List<Task> getById(@RequestParam("query")String queryName){
-//        return taskJdbcRepository.executeQuery(null,queryName,new TaskMapper());
-//    }
-    @Autowired
     private final GenericService genericService;
 
     public GenericQueryController(GenericService genericService) {

@@ -1,6 +1,7 @@
 package com.surabhi.taskapp.entity;
 
 import lombok.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,8 +21,13 @@ public class UserEntity {
     private int id;
     private String name;
     private String password;
+
     @Column(name = "email", unique = true)
     private String email;
+
+//    public void setPassword(String password) {
+//        this.password = new BCryptPasswordEncoder().encode(password);
+//    }
 
     @Override
     public boolean equals(Object o) {

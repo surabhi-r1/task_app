@@ -27,15 +27,14 @@ import java.util.stream.Collectors;
 public class TaskServiceImpl implements TaskService {
 
 
-    @Autowired
     private final TaskRepository taskRepository;
-    @Autowired
+
     private final UserUtils userUtils;
 
 
-    public TaskServiceImpl(TaskRepository taskRepository,UserUtils userUtils ) {
+    public TaskServiceImpl(TaskRepository taskRepository, UserUtils userUtils) {
         this.taskRepository = taskRepository;
-        this.userUtils=userUtils;
+        this.userUtils = userUtils;
 
     }
 
@@ -152,8 +151,8 @@ public class TaskServiceImpl implements TaskService {
             log.info("operation = getAllByUserId, status = IN_PROGRESS, message = get all details by user id");
 
             List<TaskEntity> taskEntities = taskRepository.findAllByUserId(userUtils.getUser().getUserId());
-            List<Task> tasks= new ArrayList<>();
-            for (TaskEntity taskEntity: taskEntities) {
+            List<Task> tasks = new ArrayList<>();
+            for (TaskEntity taskEntity : taskEntities) {
                 Task task = new Task();
                 BeanUtils.copyProperties(taskEntity, task);
                 Set<SubTask> subTasks = Optional.ofNullable(taskEntity.getSubTaskEntityList())
@@ -183,40 +182,7 @@ public class TaskServiceImpl implements TaskService {
         return response;
     }
 
-//    @Override
-//    @Transactional
-//    public Response<?> update(Long id, Task task) {
-//        Response<?> response = new Response<>();
-//        try {
-//            log.info("operation = updateTask, status = IN_PROGRESS, message = get task by id");
-//            //throws Exception
-//            Optional<TaskEntity> taskEntity = taskRepository.findById(id);
-//
-//            if (taskEntity.isPresent())
-//            {
-//                TaskEntity tasks = taskEntity.get();
-//                Optional.ofNullable(task.getName())
-//                        .ifPresent(tasks::setName);
-//                Optional.ofNullable(task.getDescription())
-//                        .ifPresent(tasks::setDescription);
-//
-//                tasks.setName(tasks.getName());
-//                tasks.setDescription(tasks.getDescription());
-//
-//                taskRepository.save(tasks);
-//                log.info("operation = updateTask, status = SUCCESS, message = get task by id");
-//                response.setHttpStatus(HttpStatus.OK);
-//            } else {
-//                response.setHttpStatus(HttpStatus.NOT_FOUND);
-//            }
-//            return response;
-//        } catch (Exception e) {
-//            log.error("operation = updateTask, status = ERROR, msg = error in add details", e);
-//            response.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-//            return response;
-//        }
-//
-//    }
+
 
     @Override
     public Response<?> delete(Long id) {
@@ -236,87 +202,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
-//    public Response<?> getNewById(List<Task> tasks) {
-//        Response<?> response = new Response<>();
-//        try {
-//            for (Task task : tasks) {
-//                Optional<TaskEntity> optionalTaskEntity = taskRepository.findById(task.getId());
-//
-//                if (optionalTaskEntity.isPresent()) {
-//                    Optional<UserEntity> userEntity = userRepository.findById(task.getUserId());
-//                    if (userEntity.isPresent()) {
-//                        UserEntity user = userEntity.get();
-//
-//                        TaskEntity taskEntity = optionalTaskEntity.get();
-//
-//                        Optional.ofNullable(task.getName())
-//                                .ifPresent(taskEntity::setName);
-//                        Optional.ofNullable(task.getUserName())
-//                                .ifPresent(taskEntity::setUserName);
-//
-//                        taskEntity.setUserName(user.getName());
-//                        taskRepository.save(taskEntity);
-//                    }
-//                }
-//            }
-//            response.setHttpStatus(HttpStatus.OK);
-//            return response;
-//        } catch (Exception e) {
-//            response.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-//            return response;
-//        }
-//    }
 
-//    collect userIds, taskIds to List
-    // get taskIds and save to map same for users
-    // get taskentity from map and add to list
-//    public Response<?> getNewById(List<Task> tasks) {
-//        Response<?> response = new Response<>();
-//        List<Long> taskIds = new ArrayList<>();
-//        List<Long> userIds = new ArrayList<>();
-//        for (Task task : tasks) {
-//            userIds.add(task.getUserId());
-//            taskIds.add(task.getId());
-//        }
-//
-//
-//        List<TaskEntity> taskEntities = taskRepository.findByIdIn(taskIds);
-//        Map<Long, TaskEntity> taskEntityMap = new HashMap<>();
-//        for (TaskEntity task : taskEntities) {
-//            taskEntityMap.put(task.getId(), task);
-//        }
-//
-//        List<UserEntity> userEntities = userRepository.findByIdIn(userIds);
-//        Map<Long, UserEntity> userEntityMap = new HashMap<>();
-//        for (UserEntity user : userEntities) {
-//            userEntityMap.put(user.getId(), user);
-//        }
-//
-//        List<TaskEntity> taskEntityList = new ArrayList<>();
-//        for (Task task : tasks) {
-//            UserEntity userEntity = userEntityMap.get(task.getUserId());
-//            TaskEntity taskEntity;
-//            if (taskEntityMap.get(task.getId()) != null) {
-//                taskEntity = taskEntityMap.get(task.getId());
-//                if (taskEntity.getDescription() != null) {
-//                    taskEntity.setDescription(task.getDescription());
-//                }
-//                if (taskEntity.getName() != null) {
-//                    taskEntity.setName(task.getName());
-//                }
-//            } else {
-//                taskEntity = new TaskEntity();
-//                BeanUtils.copyProperties(task, taskEntity);
-//                taskEntityList.add(taskEntity);
-//            }
-//
-//            if (userEntity != null && userEntity.getName() != null) {
-//                taskEntity.setUserName(userEntity.getName());
-//            }
-//        }
-//        taskRepository.saveAll(taskEntityList);
-//        response.setHttpStatus(HttpStatus.OK);
-//        return response;
-//    }
 
 }

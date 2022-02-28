@@ -7,6 +7,9 @@ import java.util.Collection;
 
 public class UserDetail extends User {
 
+    private String email;
+    private Integer userId;
+
     public UserDetail(String username, String password, String email,Integer userId, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
         this.email = email;
@@ -19,7 +22,6 @@ public class UserDetail extends User {
         this.userId=userId;
     }
 
-    private String email;
 
     public Integer getUserId() {
         return userId;
@@ -29,7 +31,7 @@ public class UserDetail extends User {
         this.userId = userId;
     }
 
-    private Integer userId;
+
 
     public String getEmail() {
         return email;

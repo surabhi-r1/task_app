@@ -13,7 +13,7 @@ public interface TaskService {
 
     Response<?> add(Task task);
 
-   // Response<?> update(Long id, Task task);
+
 
     Response<?> delete(Long id);
 
@@ -21,5 +21,5 @@ public interface TaskService {
 
     Response<List<Task>> getAllByUserId();
 
-//    Response<?> getNewById(List<Task> task);
+
 }

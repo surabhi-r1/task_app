@@ -12,10 +12,10 @@ import org.springframework.context.annotation.PropertySource;
 public class TaskQueries {
 
     private final String findAll;
+
     public TaskQueries(@Value("${FIND_ALL_TASK}") String findAll) {
         this.findAll = findAll;
     }
-
 
 
 }

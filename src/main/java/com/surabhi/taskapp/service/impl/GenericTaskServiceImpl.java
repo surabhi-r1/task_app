@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 @Slf4j
 public class GenericTaskServiceImpl implements GenericService {
-    @Autowired
+
     private final TaskJdbcRepository taskJdbcRepository;
 
 
