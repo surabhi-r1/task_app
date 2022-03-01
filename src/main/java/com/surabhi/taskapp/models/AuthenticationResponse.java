@@ -1,14 +1,14 @@
 package com.surabhi.taskapp.models;
 
+import lombok.Data;
+
+@Data
 public class AuthenticationResponse {
-    private final String jwt;
+    private  String jwt;
+
+    private  String message;
 
     public AuthenticationResponse(String jwt) {
         this.jwt = jwt;
     }
-
-    public String getJwt() {
-        return jwt;
-    }
-
 }

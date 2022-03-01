@@ -26,32 +26,21 @@ public class UserController {
 
     public UserController(AuthenticationManager authenticationManager, MyUserDetailsService userDetailsService, JwtUtil jwtTokenUtil) {
         this.authenticationManager = authenticationManager;
-
         this.userDetailsService = userDetailsService;
-
         this.jwtTokenUtil = jwtTokenUtil;
     }
-
 
     @RequestMapping("/hello")
     public String hello() {
         return "Hello World welcome to java jwt";
     }
 
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+    @PostMapping(value = "/authenticate")
+    public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception  {
 
-        try {
-            log.info("api = /authenticate, method = POST, status = IN_PROGRESS");
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
             );
-            log.info("api = /authenticate, method = POST, status = SUCCESS");
-
-        } catch (BadCredentialsException e) {
-            log.error("operation = authenticate, status = ERROR, msg = error in authentication", e);
-
-        }
         final UserDetail userDetail = userDetailsService.loadUserByUseremail(authenticationRequest.getEmail());
         final String jwt = jwtTokenUtil.generateToken(userDetail);
         return ResponseEntity.ok(new AuthenticationResponse(jwt));

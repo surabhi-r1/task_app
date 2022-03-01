@@ -5,14 +5,11 @@ import com.surabhi.taskapp.entity.UserEntity;
 import com.surabhi.taskapp.repository.UserRepository;
 import com.surabhi.taskapp.response.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 
 @Slf4j
@@ -20,7 +17,6 @@ import java.util.ArrayList;
 public class MyUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
-
 
     public MyUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -33,7 +29,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
         if (user == null) {
             log.error("operation =loadUserByUsername status = ERROR, msg = error in loadUserByUsername");
-            throw new UsernameNotFoundException("User not found with username: " + email);
+            throw new UsernameNotFoundException("User not found with userEmail: " + email);
         }
 
         log.info("operation =loadUserByUsername, status =SUCCESS, message = load user by Username");
@@ -51,7 +47,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
         if (user == null) {
             log.error("operation =loadUserByUseremail, status = ERROR, msg = error in loadUserByUseremail");
-            throw new UsernameNotFoundException("User not found: " + email);
+            throw new UsernameNotFoundException("User not found with useremail: " + email);
         }
 
         log.info("operation =loadUserByUseremail, status =SUCCESS, message = load user by User email");
@@ -82,4 +78,6 @@ public class MyUserDetailsService implements UserDetailsService {
         }
         return response;
     }
+
+
 }

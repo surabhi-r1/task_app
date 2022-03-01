@@ -18,7 +18,7 @@ public class JwtUtil {
 
     private final String SECRET_KEY;
 
-    public JwtUtil(@Value("${key}") String secret_key) {
+    public JwtUtil(@Value("${bcrypt_secret_key}") String secret_key) {
         SECRET_KEY = secret_key;
     }
 
