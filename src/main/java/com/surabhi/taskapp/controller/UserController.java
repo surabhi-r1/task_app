@@ -8,6 +8,7 @@ import com.surabhi.taskapp.models.AuthenticationResponse;
 import com.surabhi.taskapp.response.Response;
 import com.surabhi.taskapp.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -37,13 +38,14 @@ public class UserController {
 
     @PostMapping(value = "/authenticate")
     public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception  {
-
+        log.info("api = /authenticate, method = POST, status = IN_PROGRESS");
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
             );
+        log.info("api = /authenticate, method = POST, status = SUCCESS");
         final UserDetail userDetail = userDetailsService.loadUserByUseremail(authenticationRequest.getEmail());
         final String jwt = jwtTokenUtil.generateToken(userDetail);
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthenticationResponse(jwt));
     }
 
     @PostMapping(value = "/register")

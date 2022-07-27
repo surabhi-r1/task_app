@@ -1,22 +1,20 @@
 package com.surabhi.taskapp.controller;
 
+import com.surabhi.taskapp.dto.SubTask;
 import com.surabhi.taskapp.dto.Task;
-import com.surabhi.taskapp.response.PaginationResponse;
 import com.surabhi.taskapp.response.Response;
 import com.surabhi.taskapp.service.impl.TaskServiceImpl;
 import com.surabhi.taskapp.util.UserUtils;
+import liquibase.pro.packaged.R;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -115,13 +113,48 @@ class TaskControllerTest {
 
     @Test
     void getAllDetailsByUserId() {
-        Response response = new Response<>();
-        response.setHttpStatus(OK);
+        Response<List<Task>> response = new Response<>();
+        Set<SubTask> subTasks = new HashSet<>();
+        SubTask subTask = SubTask
+                .builder()
+                .id(11l)
+                .name("aa")
+                .description("aaaaa")
+                .build();
+        subTasks.add(subTask);
+
+        List<Task> tasks = new ArrayList<>();
+        Task task = Task.builder()
+                .id(88)
+                .name("aaa")
+                .description("aaaaa")
+                .subTasks(subTasks)
+                .build();
+
+        task.setSubTasks(subTasks);
+        tasks.add(task);
+
+        response.setHttpStatus(HttpStatus.OK);
+        response.setResponse(tasks);
+
         Mockito.when(taskService.getAllByUserId()).thenReturn(response);
-        ResponseEntity<?> responseEntity = taskController.getAllDetailsByUserId();
+        ResponseEntity<List<Task>> responseEntity = taskController.getAllDetailsByUserId();
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals("aaa", responseEntity.getBody().get(0).getName());
     }
 
-
-
+    @Test
+    void updateMany() {
+        Response response = new Response<>();
+        response.setHttpStatus(HttpStatus.OK);
+        List<Task> task=new ArrayList<>();
+        Task task1=Task.builder()
+                .name("java")
+                .description("desc")
+                .build();
+        task.add(task1);
+        Mockito.when(taskService.updateMany(task)).thenReturn(response);
+        ResponseEntity responseEntity=taskController.updateMany(task);
+        assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
+    }
 }

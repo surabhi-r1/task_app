@@ -3,6 +3,7 @@ package com.surabhi.taskapp.service.impl;
 
 import com.surabhi.taskapp.dto.SubTask;
 import com.surabhi.taskapp.dto.Task;
+import com.surabhi.taskapp.dto.User;
 import com.surabhi.taskapp.entity.SubTaskEntity;
 import com.surabhi.taskapp.entity.TaskEntity;
 
@@ -141,6 +142,7 @@ public class TaskServiceImpl implements TaskService {
             return response;
         }
     }
+
     @Override
     @Transactional
     public Response<?> update(Long id, Task task) {
@@ -173,6 +175,51 @@ public class TaskServiceImpl implements TaskService {
         }
 
     }
+
+    @Override
+    public Response<?> updateMany(List<Task> tasks) {
+        Response<?> response = new Response<>();
+        //take list of ids
+        //fetch entities using ids
+        //get the entities set and save
+        List<Long> taskIds = new ArrayList<>();
+        for (Task task : tasks) {
+            taskIds.add(task.getId());
+        }
+        List<TaskEntity> taskEntities = taskRepository.findByIdIn(taskIds);
+        Map<Long, TaskEntity> taskEntityMap = new HashMap<>();
+        for (TaskEntity task : taskEntities) {
+            taskEntityMap.put(task.getId(), task);
+        }
+        List<TaskEntity> taskEntityList = new ArrayList<>();
+        for (Task task : tasks) {
+            TaskEntity taskEntity;
+            if (taskEntityMap.get(task.getId()) != null) {
+                taskEntity = taskEntityMap.get(task.getId());
+
+                if (taskEntity.getDescription() != null) {
+                    taskEntity.setDescription(task.getDescription());
+                }
+                if (taskEntity.getName() != null) {
+                    taskEntity.setName(task.getName());
+                }
+                taskEntity.setUserId(userUtils.getUser().getUserId());
+
+                taskEntityList.add(taskEntity);
+            } else {
+                taskEntity = new TaskEntity();
+                BeanUtils.copyProperties(task, taskEntity);
+                taskEntityList.add(taskEntity);
+            }
+
+        }
+        taskRepository.saveAll(taskEntityList);
+        response.setHttpStatus(HttpStatus.OK);
+        return response;
+
+    }
+
+
     @Override
     public Response<List<Task>> getAllByUserId() {
         Response<List<Task>> response = new Response<>();
@@ -212,8 +259,6 @@ public class TaskServiceImpl implements TaskService {
         return response;
     }
 
-
-
     @Override
     public Response<?> delete(Long id) {
         Response<?> response = new Response<>();
@@ -230,8 +275,26 @@ public class TaskServiceImpl implements TaskService {
             return response;
         }
     }
+    public Response<Void> addManyTask(List<Task> tasks) {
+        Response<Void> serviceResponse = new Response<>();
 
-
-
-
+        try {
+         //   log.info("operation = addMany, status = IN_PROGRESS, userId = {}", user.getUserId());
+            List<TaskEntity> taskEntityList = new ArrayList<>();
+            for (Task task : tasks) {
+                TaskEntity taskEntity = new TaskEntity();
+                BeanUtils.copyProperties(task, taskEntity);
+                taskEntity.setUserId(userUtils.getUser().getUserId());
+                taskRepository.save(taskEntity);
+            }
+            taskRepository.saveAll(taskEntityList);
+          //  log.info("operation = addMany, result = SUCCESS, userId = {}", userUtils.getUserId());
+            serviceResponse.setHttpStatus(HttpStatus.OK);
+            return serviceResponse;
+        } catch (Exception e) {
+       //     log.error("operation = addMany, status = ERROR, userId = {}", user.getUserId(), e);
+            serviceResponse.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return serviceResponse;
+    }
 }

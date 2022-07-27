@@ -29,6 +29,14 @@ public class TaskController {
         return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
     }
 
+
+    @PutMapping
+    public ResponseEntity<?> updateMany(@RequestBody List<Task> task){
+        log.info("api=/task,method=PUT,status=IN PROGRESS");
+        Response<?> response=taskService.updateMany(task);
+        log.info("api=/task,method=PUT,status=SUCCESS");
+        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
+    }
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable long id) {
         log.info("api = /task, method = GET, status = IN_PROGRESS");
@@ -59,6 +67,14 @@ public class TaskController {
         Response<?> response = taskService.delete(id);
         log.info("api = /tasks, method = DELETE, status = SUCCESS");
         return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
+    }
+    @PostMapping("/addMany")
+    public ResponseEntity<Void> addManyTask(@RequestBody List<Task> tasks) {
+       // User user = userUtil.getLoginUser();
+      //  log.info("api = /task/addMany, method = POST, result = IN_PROGRESS, userId = {}", user.getUserId());
+        Response<?> serviceResponse = taskService.addManyTask(tasks);
+     //   log.info("api = /task/addMany, method = POST, result = SUCCESS, userId = {}", user.getUserId());
+        return ResponseEntity.status(serviceResponse.getHttpStatus()).build();
     }
 
 }

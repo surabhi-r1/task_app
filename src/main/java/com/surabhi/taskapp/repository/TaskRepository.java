@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface TaskRepository extends PagingAndSortingRepository<TaskEntity, Long> {
     List<TaskEntity> findAllByUserId(Integer userId);
+    List<TaskEntity> findByIdIn(List<Long> id);
 
 }
