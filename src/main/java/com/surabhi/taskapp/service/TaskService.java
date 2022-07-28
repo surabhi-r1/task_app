@@ -13,10 +13,17 @@ public interface TaskService {
 
     Response<?> add(Task task);
 
-    Response<?> update(Long id, Task task);
-
     Response<?> delete(Long id);
 
     Response<Task> getById(Long id);
+
+    Response<List<Task>> getAllByUserId();
+
+    Response<?> update(Long id, Task task);
+
+    Response<?> updateMany(List<Task> task);
+
+    Response<Void> addManyTask(List<Task> tasks);
+
 
 }

@@ -3,13 +3,15 @@ package com.surabhi.taskapp.service.impl;
 
 import com.surabhi.taskapp.dto.SubTask;
 import com.surabhi.taskapp.dto.Task;
+import com.surabhi.taskapp.dto.User;
 import com.surabhi.taskapp.entity.SubTaskEntity;
 import com.surabhi.taskapp.entity.TaskEntity;
-import com.surabhi.taskapp.repository.SubTaskRepository;
-import com.surabhi.taskapp.repository.TaskRepository;
+
+import com.surabhi.taskapp.repository.*;
 import com.surabhi.taskapp.response.PaginationResponse;
 import com.surabhi.taskapp.response.Response;
 import com.surabhi.taskapp.service.TaskService;
+import com.surabhi.taskapp.util.UserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +29,15 @@ import java.util.stream.Collectors;
 public class TaskServiceImpl implements TaskService {
 
 
-    @Autowired
     private final TaskRepository taskRepository;
 
-    public TaskServiceImpl(TaskRepository taskRepository) {
+    private final UserUtils userUtils;
+
+
+    public TaskServiceImpl(TaskRepository taskRepository, UserUtils userUtils) {
         this.taskRepository = taskRepository;
+        this.userUtils = userUtils;
+
     }
 
 
@@ -68,7 +74,7 @@ public class TaskServiceImpl implements TaskService {
 
             paginationResponse.setData(tasks);
             response.setResponse(paginationResponse);
-           // return response;
+
 
         } catch (Exception e) {
             log.error("operation = getAllTasks, status = ERROR, msg = error in getAllTasks", e);
@@ -97,6 +103,7 @@ public class TaskServiceImpl implements TaskService {
             }
 
             taskEntity.setSubTaskEntityList(subTaskEntitySet);
+            taskEntity.setUserId(userUtils.getUser().getUserId());
             taskRepository.save(taskEntity);
 
             log.info("operation = add, status = SUCCESS, message = add all tasks");
@@ -124,7 +131,6 @@ public class TaskServiceImpl implements TaskService {
                 log.info("operation = getById, status=SUCCESS, message= get task by id");
                 response.setHttpStatus(HttpStatus.OK);
                 response.setResponse(task1);
-              //  return response;
             } else {
                 response.setHttpStatus(HttpStatus.NOT_FOUND);
             }
@@ -143,7 +149,7 @@ public class TaskServiceImpl implements TaskService {
         Response<?> response = new Response<>();
         try {
             log.info("operation = updateTask, status = IN_PROGRESS, message = get task by id");
-            //throws Exception
+
             Optional<TaskEntity> taskEntity = taskRepository.findById(id);
             if (taskEntity.isPresent()) {
                 TaskEntity tasks = taskEntity.get();
@@ -171,6 +177,89 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public Response<?> updateMany(List<Task> tasks) {
+        Response<?> response = new Response<>();
+        //take list of ids
+        //fetch entities using ids
+        //get the entities set and save
+        List<Long> taskIds = new ArrayList<>();
+        for (Task task : tasks) {
+            taskIds.add(task.getId());
+        }
+        List<TaskEntity> taskEntities = taskRepository.findByIdIn(taskIds);
+        Map<Long, TaskEntity> taskEntityMap = new HashMap<>();
+        for (TaskEntity task : taskEntities) {
+            taskEntityMap.put(task.getId(), task);
+        }
+        List<TaskEntity> taskEntityList = new ArrayList<>();
+        for (Task task : tasks) {
+            TaskEntity taskEntity;
+            if (taskEntityMap.get(task.getId()) != null) {
+                taskEntity = taskEntityMap.get(task.getId());
+
+                if (taskEntity.getDescription() != null) {
+                    taskEntity.setDescription(task.getDescription());
+                }
+                if (taskEntity.getName() != null) {
+                    taskEntity.setName(task.getName());
+                }
+                taskEntity.setUserId(userUtils.getUser().getUserId());
+
+                taskEntityList.add(taskEntity);
+            } else {
+                taskEntity = new TaskEntity();
+                BeanUtils.copyProperties(task, taskEntity);
+                taskEntityList.add(taskEntity);
+            }
+
+        }
+        taskRepository.saveAll(taskEntityList);
+        response.setHttpStatus(HttpStatus.OK);
+        return response;
+
+    }
+
+
+    @Override
+    public Response<List<Task>> getAllByUserId() {
+        Response<List<Task>> response = new Response<>();
+        try {
+
+            log.info("operation = getAllByUserId, status = IN_PROGRESS, message = get all details by user id");
+
+            List<TaskEntity> taskEntities = taskRepository.findAllByUserId(userUtils.getUser().getUserId());
+            List<Task> tasks = new ArrayList<>();
+            for (TaskEntity taskEntity : taskEntities) {
+                Task task = new Task();
+                BeanUtils.copyProperties(taskEntity, task);
+                Set<SubTask> subTasks = Optional.ofNullable(taskEntity.getSubTaskEntityList())
+                        .orElse(Collections.emptySet())
+                        .stream().map(subTaskEntity -> {
+                            SubTask subTask = new SubTask();
+                            BeanUtils.copyProperties(subTaskEntity, subTask);
+                            return subTask;
+                        })
+                        .collect(Collectors.toSet());
+
+                task.setSubTasks(subTasks);
+                tasks.add(task);
+            }
+
+            log.info("operation = getAllByUserId, status = IN_PROGRESS, message = get all details by user id");
+
+            response.setHttpStatus(HttpStatus.OK);
+            response.setResponse(tasks);
+            return response;
+
+        } catch (Exception e) {
+
+            log.error("operation = getAllDetails, status = ERROR, msg = error in get all deatils by user id", e);
+            response.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
+    }
+
+    @Override
     public Response<?> delete(Long id) {
         Response<?> response = new Response<>();
         try {
@@ -186,5 +275,26 @@ public class TaskServiceImpl implements TaskService {
             return response;
         }
     }
+    public Response<Void> addManyTask(List<Task> tasks) {
+        Response<Void> serviceResponse = new Response<>();
 
+        try {
+         //   log.info("operation = addMany, status = IN_PROGRESS, userId = {}", user.getUserId());
+            List<TaskEntity> taskEntityList = new ArrayList<>();
+            for (Task task : tasks) {
+                TaskEntity taskEntity = new TaskEntity();
+                BeanUtils.copyProperties(task, taskEntity);
+                taskEntity.setUserId(userUtils.getUser().getUserId());
+                taskRepository.save(taskEntity);
+            }
+            taskRepository.saveAll(taskEntityList);
+          //  log.info("operation = addMany, result = SUCCESS, userId = {}", userUtils.getUserId());
+            serviceResponse.setHttpStatus(HttpStatus.OK);
+            return serviceResponse;
+        } catch (Exception e) {
+       //     log.error("operation = addMany, status = ERROR, userId = {}", user.getUserId(), e);
+            serviceResponse.setHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return serviceResponse;
+    }
 }

@@ -1,72 +1,60 @@
 package com.surabhi.taskapp.controller;
 
+import com.surabhi.taskapp.MyUserDetailsService;
+import com.surabhi.taskapp.UserDetail;
 import com.surabhi.taskapp.dto.User;
-import com.surabhi.taskapp.response.PaginationResponse;
+import com.surabhi.taskapp.models.AuthenticationRequest;
+import com.surabhi.taskapp.models.AuthenticationResponse;
 import com.surabhi.taskapp.response.Response;
-import com.surabhi.taskapp.service.UserService;
+import com.surabhi.taskapp.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
-@RequestMapping(value = "/user")
 @Slf4j
+@RestController
 public class UserController {
 
-    @Autowired
-    private final UserService userService;
+    private final AuthenticationManager authenticationManager;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    private final MyUserDetailsService userDetailsService;
+
+    private final JwtUtil jwtTokenUtil;
+
+    public UserController(AuthenticationManager authenticationManager, MyUserDetailsService userDetailsService, JwtUtil jwtTokenUtil) {
+        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
-    @GetMapping
-    public ResponseEntity<PaginationResponse<List<User>>> getAllInfo(@PageableDefault(size=5) Pageable pageable) {
-        log.info("api = /info, method = GET, status = IN_PROGRESS");
-        Response<PaginationResponse<List<User>>> response = userService.getAll(pageable);
-        log.info("api = /info, method = GET, status = SUCCESS");
-        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
+    @RequestMapping("/hello")
+    public String hello() {
+        return "Hello World welcome to java jwt";
     }
 
-    @PostMapping
-    public ResponseEntity<?> addUser(@RequestBody User user) {
-        log.info("api = /info, method = POST, status = IN_PROGRESS");
-        Response response = userService.add(user);
-        log.info("api = /info, method = POST, status = SUCCESS");
-        return ResponseEntity.status(response.getHttpStatus()).build();
-
+    @PostMapping(value = "/authenticate")
+    public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception  {
+        log.info("api = /authenticate, method = POST, status = IN_PROGRESS");
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
+            );
+        log.info("api = /authenticate, method = POST, status = SUCCESS");
+        final UserDetail userDetail = userDetailsService.loadUserByUseremail(authenticationRequest.getEmail());
+        final String jwt = jwtTokenUtil.generateToken(userDetail);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthenticationResponse(jwt));
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<?> updateInfo(@RequestBody User user, @PathVariable Long id) {
-        log.info("api = /info, method = PUT, status = IN_PROGRESS");
-        Response<?> response = userService.update(id, user);
-        log.info("api = /info, method = PUT, status = SUCCESS");
-        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getInfoById(@PathVariable Long id) {
-        log.info("api = /info/id, method = GET, status = IN_PROGRESS");
-        Response<User> response = userService.getById(id);
-        log.info("api = /info/id, method = GET, status = SUCCESS");
+    @PostMapping(value = "/register")
+    public ResponseEntity<?> saveUser(@RequestBody User user) throws Exception {
+        log.info("api = /register, method = POST, status = IN_PROGRESS");
+        Response<?> response = userDetailsService.save(user);
+        log.info("api = /register, method = POST, status = SUCCESS");
         return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
 
     }
-
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> deleteInfo(@PathVariable Long id) {
-        log.info("api = /info/id, method = DELETE, status = IN_PROGRESS");
-        Response<?> response = userService.delete(id);
-        log.info("api = /info/id, method = DELETE, status = SUCCESS");
-        return ResponseEntity.status(response.getHttpStatus()).body(response.getResponse());
-    }
-
 
 }
-

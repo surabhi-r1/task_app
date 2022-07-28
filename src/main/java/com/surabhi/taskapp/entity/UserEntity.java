@@ -1,62 +1,44 @@
 package com.surabhi.taskapp.entity;
 
 import lombok.*;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.persistence.*;
-import java.util.HashSet;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
-@Getter
-@Setter
+@Data
+@ToString
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_entity", schema = "public")
+@NoArgsConstructor
+@Table(name = "user", schema = "public")
 public class UserEntity {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     private String name;
-    @Column(name = "reg_no")
-    private Integer regNo;
-    private String gender;
-    @Column(name = "mob_no")
-    private Long mobileNumber;
-    private Integer age;
+    private String password;
+    @Column(name = "email", unique = true)
+    private String email;
 
-    @OneToMany(orphanRemoval = true, mappedBy = "userEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @LazyCollection(LazyCollectionOption.TRUE)
-    private Set<AddressEntity> addressEntityList = new HashSet<>();
-
+    public void setPassword(String password) {
+        this.password = new BCryptPasswordEncoder().encode(password);
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserEntity that = (UserEntity) o;
-        return Objects.equals(name, that.name) && Objects.equals(regNo, that.regNo) && Objects.equals(gender, that.gender) && Objects.equals(mobileNumber, that.mobileNumber) && Objects.equals(age, that.age);
+        return id == that.id && Objects.equals(name, that.name) && Objects.equals(password, that.password) && Objects.equals(email, that.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, regNo, gender, mobileNumber, age);
+        return Objects.hash(id, name, password, email);
     }
-
-    @Override
-    public String toString() {
-        return "UserEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", regNo=" + regNo +
-                ", gender='" + gender + '\'' +
-                ", mobileNumber=" + mobileNumber +
-                ", age=" + age +
-                '}';
-    }
-
-
 }

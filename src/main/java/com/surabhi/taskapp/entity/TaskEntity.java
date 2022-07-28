@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
@@ -27,26 +28,32 @@ public class TaskEntity {
     @Column(name = "name")
     private String name;
     private String description;
-
     @CreationTimestamp
-    private Date createdDate;
+    @Column(name = "created_date")
+    private Timestamp createdDate;
+    @Column(name="user_id")
+    private Integer userId;
 
-    @OneToMany(orphanRemoval = true, mappedBy = "taskEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private Set<SubTaskEntity> subTaskEntityList = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TaskEntity that = (TaskEntity) o;
-        return id == that.id && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(createdDate, that.createdDate);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(createdDate, that.createdDate) ;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, name, description, createdDate);
     }
+
+
+    @OneToMany(orphanRemoval = true, mappedBy = "taskEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Set<SubTaskEntity> subTaskEntityList = new HashSet<>();
+
+
 
     public void setSubTaskEntityList(Set<SubTaskEntity> subTaskEntityList) {
         this.subTaskEntityList.clear();
